@@ -1,4 +1,5 @@
 #!/bin/bash
+clear 
 # Color Validation
 color1='\e[031;1m'
 color2='\e[34;1m'
