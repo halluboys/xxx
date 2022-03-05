@@ -424,13 +424,13 @@ wget -O swapkvm "https://${akbarvpn}/swapkvm.sh"
 wget -O addv2ray  "https://${akbarvpnn}/addv2ray.sh"
 wget -O addvless "https://${akbarvpnn}/addvless.sh"
 wget -O addtrojan "https://${akbarvpnn}/addtrojan.sh"
-wget -O delvmess "https://${akbarvpnn}/delv2ray.sh"
+wget -O delv2ray "https://${akbarvpnn}/delv2ray.sh"
 wget -O delvless "https://${akbarvpnn}/delvless.sh"
 wget -O deltrojan "https://${akbarvpnn}/deltrojan.sh"
-wget -O cekvmess "https://${akbarvpnn}/cekv2ray.sh"
+wget -O cekv2ray "https://${akbarvpnn}/cekv2ray.sh"
 wget -O cekvless "https://${akbarvpnn}/cekvless.sh"
 wget -O cektrojan "https://${akbarvpnn}/cektrojan.sh"
-wget -O renewvmess "https://${akbarvpnn}/renewv2ray.sh"
+wget -O renewv2ray  "https://${akbarvpnn}/renewv2ray.sh"
 wget -O renewvless "https://${akbarvpnn}/renewvless.sh"
 wget -O renewtrojan "https://${akbarvpnn}/renewtrojan.sh"
 wget -O certv2ray "https://${akbarvpnn}/certv2ray.sh"
@@ -438,7 +438,7 @@ wget -O addtrgo "https://${akbarvpnnn}/addtrgo.sh"
 wget -O deltrgo "https://${akbarvpnnn}/deltrgo.sh"
 wget -O renewtrgo "https://${akbarvpnnn}/renewtrgo.sh"
 wget -O cektrgo "https://${akbarvpnnn}/cektrgo.sh"
-#wget -O triall2tp "https://${akbarvpnnnnn}/triall2tp.sh"
+# wget -O triall2tp "https://${akbarvpnnnnn}/triall2tp.sh"
 #wget -O trialpptp "https://${akbarvpnnnnn}/trialpptp.sh"
 #wget -O trialss "https://${akbarvpnnnnn}/trialss.sh"
 #wget -O trialssh "https://${akbarvpnnnnn}/trialssh.sh"
@@ -542,13 +542,13 @@ chmod +x addtrgo
 chmod +x deltrgo
 chmod +x renewtrgo
 chmod +x cektrgo
-#chmod +x triall2tp
-#chmod +x trialpptp
-#chmod +x trialss
-#chmod +x trialssh
-#chmod +x trialssr
-#chmod +x trialtrgo
-#chmod +x trialsstp
+chmod +x triall2tp
+chmod +x trialpptp
+chmod +x trialss
+chmod +x trialssh
+chmod +x trialssr
+chmod +x trialtrgo
+chmod +x trialsstp
 #chmod +x trialtrojan
 #chmod +x trialv2ray
 #chmod +x trialvless
