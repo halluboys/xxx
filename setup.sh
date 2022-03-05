@@ -46,7 +46,7 @@ apt-get install figlet -y > /dev/null 2>&1
 apt-get install ruby -y > /dev/null 2>&1
 gem install lolcat > /dev/null 2>&1
 clear
-sudo hostnamectl set-hostname Setup-Halu-Project
+sudo hostnamectl set-hostname  Halu-Project
 clear
 if [ -f "/etc/xray/domain" ]; then
 echo "Script Already Installed"
