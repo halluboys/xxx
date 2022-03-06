@@ -1,36 +1,29 @@
 #!/bin/bash
-GREEN='\033[0;32m'
-PURPLE='\033[0;35m'
-CYAN='\033[0;36m'
-NC='\033[0m'
-yl='\e[32;1m'
-bl='\e[36;1m'
-gl='\e[32;1m'
-rd='\e[31;1m'
-mg='\e[0;95m'
-blu='\e[34m'
-op='\e[35m'
-or='\033[1;33m'
-bd='\e[1m'
-color1='\e[031;1m'
-color2='\e[34;1m'
-color3='\e[0m'
-# Getting
-# IP Validation
-dateFromServer=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
-biji=`date +"%Y-%m-%d" -d "$dateFromServer"`
+MYIP=$(curl -sS ipv4.icanhazip.com)
 #########################
-
-MYIP=$(curl -sS ipinfo.io/ip)
-
-red='\e[1;31m'
-green='\e[1;32m'
-NC='\e[0m'
-green() { echo -e "\\033[32;1m${*}\\033[0m"; }
-red() { echo -e "\\033[31;1m${*}\\033[0m"; }
-PERMISSION
-clear
-
+IZIN=$(curl -sS https://raw.githubusercontent.com/halluboys/perizinan/main/main/allow | awk '{print $4}' | grep $MYIP)
+if [ $MYIP = $IZIN ]; then
+echo -e "\e[32mPermission Accepted...\e[0m"
+else
+echo -e "\e[31mPermission Denied!\e[0m";
+echo -e "\e[31mDaftar IP dalam github lok sayang okay? mun dah daftar tapi masih juak permission denied refresh dolok website ya hehe. Love you #\e[0m"
+exit 0
+fi
+#EXPIRED
+expired=$(curl -sS https://raw.githubusercontent.com/halluboys/perizinan/main/main/allow | grep $MYIP | awk '{print $3}')
+echo $expired > /root/expired.txt
+today=$(date -d +1day +%Y-%m-%d)
+while read expired
+do
+	exp=$(echo $expired | curl -sS https://raw.githubusercontent.com/halluboys/perizinan/main/main/allow | grep $MYIP | awk '{print $3}')
+	if [[ $exp < $today ]]; then
+		Exp2="\033[1;31mExpired\033[0m"
+        else
+        Exp2=$(curl -sS https://raw.githubusercontent.com/halluboys/perizinan/main/main/allow | grep $MYIP | awk '{print $3}')
+	fi
+done < /root/expired.txt
+rm /root/expired.txt
+Name=$(curl -sS https://raw.githubusercontent.com/halluboys/perizinan/main/main/allow | grep $MYIP | awk '{print $2}')
 # GETTING OS INFORMATION
 source /etc/os-release
 Versi_OS=$VERSION
