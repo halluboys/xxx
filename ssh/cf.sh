@@ -12,17 +12,6 @@ CYAN='\033[0;36m'
 LIGHT='\033[0;37m'
 # ==========================================
 MYIP=$(wget -qO- ifconfig.me/ip);
-IZIN=$( curl https://raw.githubusercontent.com/halluboys/perizinan/main/main/allow  | grep $MYIP )
-if [ $MYIP = $IZIN ]; then
-echo -e "${green}Permission Accepted...${NC}"
-else
-echo -e "${red}Permission Denied!${NC}";
-echo "Please Contact Admin"
-echo "Telegram t.me/xzvnct"
-echo "Waiting 5 Sec"
-rm -f setup.sh
-exit 0
-fi
 # ==========================================
 apt install jq curl -y
 DOMAIN=xzvnct.my.id
