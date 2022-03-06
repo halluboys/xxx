@@ -1,3 +1,23 @@
+!/bin/bash
+# Color Validation
+color1='\e[031;1m'
+color2='\e[34;1m'
+color3='\e[0m'
+DF='\e[39m'
+Bold='\e[1m'
+Blink='\e[5m'
+yell='\e[33m'
+red='\e[1;31m'
+green='\e[1;32m'
+blue='\e[1;34m'
+PURPLE='\e[1;95m'
+CYAN='\e[1;36m'
+Lred='\e[1;91m'
+Lgreen='\e[92m'
+Lyellow='\e[93m'
+white='\e[1;37m'
+NC='\e[0m'
+MYIP=$(curl -sS ipv4.icanhazip.com)
 cd /usr/bin
 
 wget -O triall2tp "https://raw.githubusercontent.com/halluboys/xxx/main/trial/triall2tp.sh"
