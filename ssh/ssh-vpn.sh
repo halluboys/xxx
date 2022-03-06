@@ -438,17 +438,17 @@ wget -O addtrgo "https://${akbarvpnnn}/addtrgo.sh"
 wget -O deltrgo "https://${akbarvpnnn}/deltrgo.sh"
 wget -O renewtrgo "https://${akbarvpnnn}/renewtrgo.sh"
 wget -O cektrgo "https://${akbarvpnnn}/cektrgo.sh"
-# wget -O triall2tp "https://${akbarvpnnnnn}/triall2tp.sh"
-#wget -O trialpptp "https://${akbarvpnnnnn}/trialpptp.sh"
-#wget -O trialss "https://${akbarvpnnnnn}/trialss.sh"
-#wget -O trialssh "https://${akbarvpnnnnn}/trialssh.sh"
-#wget -O trialssr "https://${akbarvpnnnnn}/trialssr.sh"
-#wget -O trialsstp "https://${akbarvpnnnnn}/trialsstp.sh"
-#wget -O trialtrgo "https://${akbarvpnnnnn}/trialtrgo.sh"
-#wget -O trialtrojan "https://${akbarvpnnnnn}/trialtrojan.sh"
-#wget -O trialv2ray "https://${akbarvpnnnnn}/trialv2ray.sh"
-#wget -O trialvless "https://${akbarvpnnnnn}/trialvless.sh"
-#wget -O trialwg "https://${akbarvpnnnnn}/trialwg.sh"
+wget -O triall2tp "https://${akbarvpnnnnn}/triall2tp.sh"
+wget -O trialpptp "https://${akbarvpnnnnn}/trialpptp.sh"
+wget -O trialss "https://${akbarvpnnnnn}/trialss.sh"
+wget -O trialssh "https://${akbarvpnnnnn}/trialssh.sh"
+wget -O trialssr "https://${akbarvpnnnnn}/trialssr.sh"
+wget -O trialsstp "https://${akbarvpnnnnn}/trialsstp.sh"
+wget -O trialtrgo "https://${akbarvpnnnnn}/trialtrgo.sh"
+wget -O trialtrojan "https://${akbarvpnnnnn}/trialtrojan.sh"
+wget -O trialv2ray "https://${akbarvpnnnnn}/trialv2ray.sh"
+wget -O trialvless "https://${akbarvpnnnnn}/trialvless.sh"
+wget -O trialwg "https://${akbarvpnnnnn}/trialwg.sh"
 
 wget -O portsshnontls "https://raw.githubusercontent.com/halluboys/xxx/main/websocket/portsshnontls.sh"
 wget -O portsshws "https://raw.githubusercontent.com/halluboys/xxx/main/websocket/portsshws.sh"
@@ -549,10 +549,10 @@ chmod +x trialssh
 chmod +x trialssr
 chmod +x trialtrgo
 chmod +x trialsstp
-#chmod +x trialtrojan
-#chmod +x trialv2ray
-#chmod +x trialvless
-#chmod +x trialwg
+chmod +x trialtrojan
+chmod +x trialv2ray
+chmod +x trialvless
+chmod +x trialwg
 
 echo "0 5 * * * root clearlog && reboot" >> /etc/crontab
 echo "0 0 * * * root xp" >> /etc/crontab
