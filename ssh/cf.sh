@@ -12,10 +12,19 @@ CYAN='\033[0;36m'
 LIGHT='\033[0;37m'
 # ==========================================
 MYIP=$(wget -qO- ifconfig.me/ip);
+#########################
+IZIN=$(curl -sS https://raw.githubusercontent.com/halluboys/perizinan/main/main/allow | awk '{print $4}' | grep $MYIP)
+if [ $MYIP = $IZIN ]; then
+echo -e "\e[32mPermission Accepted...\e[0m"
+else
+echo -e "\e[31mPermission Denied!\e[0m";
+echo -e "\e[31mDaftar IP dalam github lok sayang okay? mun dah daftar tapi masih juak permission denied refresh dolok website ya hehe. Love you #\e[0m"
+exit 0
+fi
 # ==========================================
 apt install jq curl -y
 DOMAIN=xzvnct.my.id
-sub=$(</dev/urandom tr -dc a-z0-9 | head -c4)
+sub=$(</dev/urandom tr -dc a-z0-9 | head -c5)
 SUB_DOMAIN=${sub}.xzvnct.my.id
 CF_ID=hammysayang@gmail.com
 CF_KEY=c8cb595f43fcd359488dc3c72826544fe4638
