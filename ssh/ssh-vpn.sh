@@ -130,6 +130,7 @@ apt install libreadline-dev -y
 apt install zlib1g-dev -y
 apt install libssl-dev -y
 apt install libssl1.0-dev -y
+apt install lolcat -y
 apt install dos2unix -y
 
 # set time GMT +7
@@ -542,17 +543,17 @@ chmod +x addtrgo
 chmod +x deltrgo
 chmod +x renewtrgo
 chmod +x cektrgo
-chmod +x triall2tp
-chmod +x trialpptp
-chmod +x trialss
-chmod +x trialssh
-chmod +x trialssr
-chmod +x trialtrgo
-chmod +x trialsstp
-chmod +x trialtrojan
-chmod +x trialv2ray
-chmod +x trialvless
-chmod +x trialwg
+chmod +x triall2tp && dos2unix triall2tp
+chmod +x trialpptp && dos2unix trialpptp
+chmod +x trialss  && dos2unix trialss
+chmod +x trialssh && dos2unix trialssh
+chmod +x trialssr && dos2unix trialssr
+chmod +x trialtrgo && dos2unix trialtrgo
+chmod +x trialsstp && dos2unix trialsstp
+chmod +x trialtrojan && dos2unix trialtrojan
+chmod +x trialv2ray && dos2unix trialv2ray
+chmod +x trialvless && dos2unix trialvless
+chmod +x trialwg && dos2unix trialwg
 
 echo "0 5 * * * root clearlog && reboot" >> /etc/crontab
 echo "0 0 * * * root xp" >> /etc/crontab
