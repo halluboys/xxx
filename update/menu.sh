@@ -111,7 +111,7 @@ echo -e "   [${green}02${NC}]${color1} •$white SSTP - L2TP - PPTP - Wireguard 
 echo -e "   [${green}03${NC}]${color1} •$white Shadowsocks & ShadowsocksR (${color2}menu-shadowsocks${color3})$NC"
 echo -e "   [${green}04${NC}]${color1} •$white V2ray Vmess & Vless (${color2}menu-v2ray${color3})$NC"
 echo -e "   [${green}05${NC}]${color1} •$white Trojan & TrojanGO (${color2}menu-trojan${color3})$NC"
-echo -e "   [${green}05${NC}]${color1} •$white Backup (${color2}menu-backup${color3})$NC"
+echo -e "   [${green}06${NC}]${color1} •$white Backup (${color2}menu-backup${color3})$NC"
 echo -e "   [${green}07${NC}]${color1} •$white Trial Account (${color2}menu-trial${color3})$NC"
 echo -e "   [${green}08${NC}]${color1} •$white System Tools (${color2}menu-tools${color3}) $NC"
 echo ""
