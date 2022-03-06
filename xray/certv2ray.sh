@@ -14,6 +14,7 @@ LIGHT='\033[0;37m'
 clear
 echo start
 sleep 0.5
+rm -rf /root/.acme.sh
 source /var/lib/akbarstorevpn/ipvps.conf
 domain=$(cat /etc/xray/domain)
 sudo lsof -t -i tcp:80 -s tcp:listen | sudo xargs kill
