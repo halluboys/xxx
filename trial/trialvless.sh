@@ -31,9 +31,9 @@ systemctl restart xray@vless
 systemctl restart xray@vnone
 clear
 echo -e ""
-echo -e "=================================" | lolcat
+echo -e "=================================" 
 echo -e "          TRIAL XRAY / VLESS  "
-echo -e "=================================" | lolcat
+echo -e "=================================" 
 echo -e "Remarks        : ${user}"
 echo -e "Domain         : ${domain}"
 echo -e "port TLS       : $tls"
@@ -42,12 +42,12 @@ echo -e "id             : ${uuid}"
 echo -e "Encryption     : none"
 echo -e "network        : ws"
 echo -e "path           : geo"
-echo -e "=================================" | lolcat
+echo -e "=================================" | 
 echo -e "Link TLS       : ${vlesslink1}"
-echo -e "=================================" | lolcat
+echo -e "=================================" |
 echo -e "Link None TLS  : ${vlesslink2}"
-echo -e "=================================" | lolcat
+echo -e "=================================" | 
 echo -e " ${green}Aktif Selama   : $masaaktif Hari"
-echo -e "=================================" | lolcat
-echo -e "Script Installer By : Geo•NTB" | lolcat
-echo -e "=================================" | lolcat
+echo -e "=================================" | 
+echo -e "Script Installer By : HaluVPN" | 
+echo -e "=================================" |
