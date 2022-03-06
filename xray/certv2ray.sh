@@ -15,6 +15,7 @@ clear
 echo start
 sleep 0.5
 rm -rf /root/.acme.sh
+cp /root/domain /etc/xray/domain
 source /var/lib/akbarstorevpn/ipvps.conf
 domain=$(cat /etc/xray/domain)
 sudo lsof -t -i tcp:80 -s tcp:listen | sudo xargs kill
