@@ -104,11 +104,11 @@ LIGHT='\033[0;37m'
 clear
 
 # STATUS SERVICE Shadowsocks HTTPS
-if [[ $sst_status == "running" ]]; then
-  status_sst=" ${GREEN}Running ${NC}( No Error )"
-else
-  status_sst="${RED}  Not Running ${NC}  ( Error )"
-fi
+#if [[ $sst_status == "running" ]]; then
+#  status_sst=" ${GREEN}Running ${NC}( No Error )"
+#else
+#  status_sst="${RED}  Not Running ${NC}  ( Error )"
+#fi
 
 # STATUS SERVICE Shadowsocks HTTP
 if [[ $ssh_status == "running" ]]; then 
@@ -376,7 +376,7 @@ echo -e "❇️ XRAYS Vmess None TLS    :$status_nontls_v2ray"
 echo -e "❇️ XRAYS Vless TLS         :$status_tls_vless"
 echo -e "❇️ XRAYS Vless None TLS    :$status_nontls_vless"
 echo -e "❇️ Shadowsocks-R           :$status_ssr"
-echo -e "❇️ Shadowsocks-OBFS HTTPS  :$status_sst"
+#echo -e "❇️ Shadowsocks-OBFS HTTPS  :$status_sst"
 echo -e "❇️ Shadowsocks-OBFS HTTP   :$status_ssh"
 echo -e "❇️ XRAYS Trojan            :$status_virus_trojan"
 echo -e "❇️ Trojan GO               :$status_trgo"
