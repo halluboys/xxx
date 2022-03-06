@@ -27,3 +27,4 @@ bash acme.sh --register-account -m hammysayang@gmail.com
 bash acme.sh --issue --standalone -d $domain --force
 bash acme.sh --installcert -d $domain --fullchainpath /etc/xray/xray.crt --keypath /etc/xray/xray.key
 restart
+cp /root/domain /etc/xray
