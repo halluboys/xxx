@@ -1,17 +1,6 @@
 #!/bin/bash
 MYIP=$(curl -sS ipv4.icanhazip.com)
-#########################
-IZIN=$(curl -sS https://raw.githubusercontent.com/halluboys/perizinan/main/main/allow | awk '{print $4}' | grep $MYIP)
-if [ $MYIP = $IZIN ]; then
-echo -e "\e[32mPermission Accepted...\e[0m"
-else
-echo "Please Contact Admin"
-echo "Telegram t.me/haidaralkhawarizmi"
-echo "Waiting 5 Sec"
-rm -f setup.sh
-sleep 5
-exit 0
-fi
+######################### 
 #EXPIRED
 expired=$(curl -sS https://raw.githubusercontent.com/halluboys/perizinan/main/main/allow | grep $MYIP | awk '{print $3}')
 echo $expired > /root/expired.txt
