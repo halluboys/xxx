@@ -19,7 +19,7 @@ MYIP=$(curl -sS ipinfo.io/ip)
 clear
 uuid1=$(cat /etc/trojan-go/uuid.txt)
 uuid2=$(cat /etc/trojan/uuid.txt)
-source /var/lib/geovpnstore/ipvps.conf
+source /var/lib/akbarstorevpn/ipvps.conf
 if [[ "$IP" = "" ]]; then
 domain=$(cat /etc/xray/domain)
 else
