@@ -18,7 +18,7 @@ MYIP=$(curl -sS ipinfo.io/ip)
 clear
 tr="$(cat ~/log-install.txt | grep -w "Trojan" | cut -d: -f2|sed 's/ //g')"
 uuid=$(cat /etc/trojan/uuid.txt)
-source /var/lib/geovpnstore/ipvps.conf
+source /var/lib/akbarstorevpn/ipvps.conf
 if [[ "$IP" = "" ]]; then
 domain=$(cat /etc/xray/domain)
 else
