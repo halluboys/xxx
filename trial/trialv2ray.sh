@@ -13,7 +13,7 @@ flag='\x1b[47;41m'
 MYIP=$(curl -sS ipinfo.io/ip)
 echo "Checking VPS"
 clear
-source /var/lib/geovpnstore/ipvps.conf
+source /var/lib/akbarstorevpn/ipvps.conf
 if [[ "$IP" = "" ]]; then
 domain=$(cat /etc/xray/domain)
 else
