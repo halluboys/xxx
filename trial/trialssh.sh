@@ -23,7 +23,7 @@ echo -e "${NC}${LIGHT}Please Contact Admin!!"
 echo -e "${NC}${LIGHT}Telegram : https://t.me/geovpn"
 exit 0
 fi
-source /var/lib/geovpnstore/ipvps.conf
+source /var/lib/akbarstorevpn/ipvps.conf
 if [[ "$IP2" = "" ]]; then
 domain=$(cat /etc/xray/domain)
 else
