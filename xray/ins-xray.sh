@@ -37,6 +37,8 @@ xraycore_link="https://github.com/XTLS/Xray-core/releases/download/v$latest_vers
 # / / Make Main Directory
 mkdir -p /usr/bin/xray
 mkdir -p /etc/xray
+cp /root/domain /etc/xray
+domain=$(cat /etc/xray/domain)
 
 # / / Unzip Xray Linux 64
 cd `mktemp -d`
