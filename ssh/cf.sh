@@ -23,8 +23,6 @@ exit 0
 fi
 # ==========================================
 apt install jq curl -y
-rm -rf /root/domain
-rm -rf /etc/xray/domain
 DOMAIN=xzvnct.my.id
 sub=$(</dev/urandom tr -dc a-z0-9 | head -c5)
 SUB_DOMAIN=${sub}.xzvnct.my.id
