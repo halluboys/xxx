@@ -23,9 +23,9 @@ exit 0
 fi
 # ==========================================
 apt install jq curl -y
-DOMAIN=xzvnct.my.id
-sub=$(</dev/urandom tr -dc a-z0-9 | head -c5)
-SUB_DOMAIN=${sub}.xzvnct.my.id
+DOMAIN=haluboy.live
+sub=$(</dev/urandom tr -dc a-z0-9 | head -c4)
+SUB_DOMAIN=${sub}.haluboy.live
 CF_ID=hammysayang@gmail.com
 CF_KEY=c8cb595f43fcd359488dc3c72826544fe4638
 set -euo pipefail
