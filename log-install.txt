@@ -15,7 +15,7 @@
    - XRAYS Vless TLS         : 443
    - XRAYS Vless None TLS    : 80
    - XRAYS Trojan            : 2083
-   - Websocket TLS           : 8443
+   - Websocket TLS           : 443
    - Websocket None TLS      : 8880
    - Websocket Ovpn          : 2086
    - OHP SSH                 : 8181
