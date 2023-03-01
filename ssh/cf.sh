@@ -23,7 +23,7 @@ exit 0
 fi
 # ==========================================
 apt install jq curl -y
-DOMAIN=haluboy.live
+DOMAIN=gassbul.tech
 sub=$(</dev/urandom tr -dc a-z0-9 | head -c4)
 SUB_DOMAIN=${sub}.haluboy.live
 CF_ID=hammysayang@gmail.com
