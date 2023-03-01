@@ -112,7 +112,7 @@ cat > /etc/xray/config.json << END
         "kcpSettings": {},
         "httpSettings": {},
         "wsSettings": {
-          "path": "/vmess/",
+          "path": "/haluboy",
           "headers": {
             "Host": ""
           }
