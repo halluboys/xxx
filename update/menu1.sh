@@ -67,6 +67,7 @@ Tipe=$NAME
 URL_SUPPORT=$HOME_URL
 basedong=$ID
 ISP=$(curl -s ipinfo.io/org | cut -d " " -f 2-10 )
+OS=$(hostnamectl )
 CITY=$(curl -s ipinfo.io/city )
 WKT=$(curl -s ipinfo.io/timezone )
 domain=$(cat /etc/xray/domain)
@@ -92,7 +93,7 @@ echo -e "  $CYAN ━━━━━━━━━━━━━━━━━━━━━
   echo -e "  $green Isp Name             :$white  $ISP"
   echo -e "  $green Domain               :$Lyellow  $domain"
   echo -e "  $green Ip Vps               :$Lyellow  $IPVPS"
-  echo -e "  $green Operating System     :$white  "`hostnamectl | grep "Operating System" | cut -d ' ' -f5-`
+  echo -e "  $green Operating System     :$white  $OS
   echo -e "  $green Total Amount Of RAM  : $white $tram MB"
   echo -e "  $green Used RAM             :$white  $uram MB"
   echo -e "  $green Free RAM             :$white  $fram MB"
