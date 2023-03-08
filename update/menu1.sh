@@ -58,10 +58,7 @@ IPVPS=$(curl -s ipinfo.io/ip )
 clear
 echo -e ""
 echo -e ""
-echo -e "  $Lred                                            )     "
-echo -e "  $Lred      )           (         )   .   ,    ( /(     "
-echo -e "  $Lred     /( (     (   )\ )   ( /(    ) (    )\())     "
-echo -e "  $Lred    (_)))\  _ )\ (()/(   )\())  /( )\  ((_)\      "   
+cat /usr/bin/bannerku | lolcat
 echo -e "  $CYAN ━━━$red(\e[93m_$red)\e[93m_$red(\e[93m_$red)(\e[93m_$red((\e[93m_$red)$CYAN━$red)(\e[93m_$red))$CYAN━$red((\e[93m_$red)\\e[93m__$red)(\e[93m_$red)((\e[93m_$red)(\e[93m__$red((\e[93m_$red)$CYAN━━━━━ "
 echo -e "  \E[44;1;39m      ⇱ PREMIUM SERVER SCRIPT HALUBOY ⇲           \E[0m"
 echo -e "  $CYAN ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ "
