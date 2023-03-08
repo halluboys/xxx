@@ -410,6 +410,7 @@ wget -O restart "https://${akbarvpn}/restart.sh"
 wget -O speedtest "https://${akbarvpn}/speedtest_cli.py"
 wget -O info "https://${akbarvpn}/info.sh"
 wget -O ram "https://${akbarvpn}/ram.sh"
+wget -O banner "https://raw.githubusercontent.com/halluboys/xxx/main/update/banner"
 wget -O renewssh "https://${akbarvpn}/renewssh.sh"
 wget -O autokill "https://${akbarvpn}/autokill.sh"
 wget -O ceklim "https://${akbarvpn}/ceklim.sh"
@@ -501,6 +502,7 @@ chmod +x host
 chmod +x update
 chmod +x addhost
 chmod +x menu
+chmod +x banner
 chmod +x addssh
 chmod +x trialssh
 chmod +x delssh
