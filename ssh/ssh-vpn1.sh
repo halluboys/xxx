@@ -111,6 +111,7 @@ apt install cmake -y
 apt install coreutils -y
 apt install rsyslog -y
 apt install net-tools -y
+apt install lolcat
 apt install zip -y
 apt install unzip -y
 apt install nano -y
