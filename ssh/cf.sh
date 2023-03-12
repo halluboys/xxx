@@ -23,9 +23,9 @@ exit 0
 fi
 # ==========================================
 apt install jq curl -y
-DOMAIN=gassbul.tech
+DOMAIN=haluboy.org
 sub=$(</dev/urandom tr -dc a-z0-9 | head -c4)
-SUB_DOMAIN=${sub}.gassbul.tech
+SUB_DOMAIN=${sub}.haluboy.org
 CF_ID=hammysayang@gmail.com
 CF_KEY=c8cb595f43fcd359488dc3c72826544fe4638
 set -euo pipefail
