@@ -11,7 +11,7 @@ PASS = ''
 # CONST
 BUFLEN = 4096 * 4
 TIMEOUT = 60
-DEFAULT_HOST = '127.0.0.1:443'
+DEFAULT_HOST = '127.0.0.1:8443'
 RESPONSE = 'HTTP/1.1 101 <b><font color="green"> Geo Switching Protocols</font></b>\r\n\r\nContent-Length: 104857600000\r\n\r\n'
 
 class Server(threading.Thread):
@@ -168,7 +168,7 @@ class ConnectionHandler(threading.Thread):
             host = host[:i]
         else:
             if self.method=='CONNECT':
-                port = 443
+                port = 8443
             else:
                 port = sys.argv[1]
 
