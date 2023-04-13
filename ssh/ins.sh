@@ -338,7 +338,7 @@ wget -O clearlog "https://${akbarvpn}/clearlog.sh"
 wget -O changeport "https://${akbarvpn}/changeport.sh"
 wget -O porttrojan "https://${akbarvpn}/porttrojan.sh"
 #wget -O portsstp "https://${akbarvpn}/portsstp.sh"
-wget -O portsquid "https://${akbarvpn}/portsquid.sh"
+#wget -O portsquid "https://${akbarvpn}/portsquid.sh"
 #get -O portvlm "https://${akbarvpn}/portvlm.sh"
 wget -O wbmn "https://${akbarvpn}/webmin.sh"
 wget -O xp "https://${akbarvpn}/xp.sh"
@@ -366,8 +366,8 @@ wget -O trialv2ray "https://${akbarvpnnnnn}/trialv2ray.sh"
 wget -O trialvless "https://${akbarvpnnnnn}/trialvless.sh"
 #wget -O trialwg "https://${akbarvpnnnnn}/trialwg.sh"
 
-wget -O portsshnontls "https://raw.githubusercontent.com/halluboys/xxx/main/websocket/portsshnontls.sh"
-wget -O portsshws "https://raw.githubusercontent.com/halluboys/xxx/main/websocket/portsshws.sh"
+#wget -O portsshnontls "https://raw.githubusercontent.com/halluboys/xxx/main/websocket/portsshnontls.sh"
+#wget -O portsshws "https://raw.githubusercontent.com/halluboys/xxx/main/websocket/portsshws.sh"
 wget -O menu-v2ray "https://raw.githubusercontent.com/halluboys/xxx/main/update/menu-v2ray.sh"
 wget -O menu-vless "https://raw.githubusercontent.com/halluboys/xxx/main/update/vlessmenu.sh"
 wget -O menu-trojan "https://raw.githubusercontent.com/halluboys/xxx/main/update/menu-trojan.sh"
@@ -384,16 +384,8 @@ wget -O cfh "https://raw.githubusercontent.com/halluboys/xxx/main/update/cfh.sh"
 wget -O host "https://raw.githubusercontent.com/halluboys/xxx/main/update/host.sh"
 wget -O update "https://raw.githubusercontent.com/halluboys/xxx/main/update/update.sh"
 
-chmod +x portsshnontls
-chmod +x portsshws
-chmod +x menu-ssh
-chmod +x menu-l2tp
-chmod +x menu-pptp
-chmod +x menu-sstp
-chmod +x menu-wireguad
-chmod +x menu-shadowsocks
+
 chmod +x menu-v2ray
-chmod +x menu-vpn
 chmod +x menu-tools
 chmod +x menu-trial
 chmod +x menu-backup
@@ -409,12 +401,7 @@ chmod +x update
 chmod +x addhost
 chmod +x menu
 chmod +x banner
-chmod +x addssh
-chmod +x trialssh
-chmod +x delssh
 chmod +x member
-chmod +x delexp
-chmod +x cekssh
 chmod +x restart
 chmod +x speedtest
 chmod +x info
@@ -423,14 +410,9 @@ chmod +x autokill
 chmod +x tendang
 chmod +x ceklim
 chmod +x ram
-chmod +x renewssh
 chmod +x clearlog
 chmod +x changeport
-chmod +x portovpn
-chmod +x portwg
 chmod +x porttrojan
-chmod +x portsstp
-chmod +x portsquid
 chmod +x portvlm
 chmod +x wbmn
 chmod +x xp
@@ -452,17 +434,10 @@ chmod +x addtrgo
 chmod +x deltrgo
 chmod +x renewtrgo
 chmod +x cektrgo
-chmod +x triall2tp
-chmod +x trialpptp
-chmod +x trialss
-chmod +x trialssh && dos2unix trialssh
-chmod +x trialssr
 chmod +x trialtrgo && dos2unix trialtrgo
-chmod +x trialsstp
 chmod +x trialtrojan && dos2unix trialtrojan
 chmod +x trialv2ray && dos2unix trialv2ray
 chmod +x trialvless && dos2unix trialvless
-chmod +x trialwg
 
 echo "0 5 * * * root clearlog && reboot" >> /etc/crontab
 echo "0 0 * * * root xp" >> /etc/crontab
