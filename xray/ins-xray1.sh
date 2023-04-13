@@ -114,14 +114,14 @@ cat > /etc/xray/config.json << END
         "wsSettings": {
           "path": "/vmess/",
           "headers": {
-            "Host": "${domain}"
+            "Host": ""
           }
         },
         "quicSettings": {}
       }
     },
     {
-      "port": 80,
+      "port": 443,
       "protocol": "vmess",
       "settings": {
         "clients": [
@@ -157,7 +157,7 @@ cat > /etc/xray/config.json << END
       }
     },
     {
-      "port": 443,
+      "port": 80,
       "protocol": "vless",
       "settings": {
         "clients": [
