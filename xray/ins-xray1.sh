@@ -114,7 +114,7 @@ cat > /etc/xray/config.json << END
         "wsSettings": {
           "path": "/vmess/",
           "headers": {
-            "Host": "$domain"
+            "Host": "${domain}"
           }
         },
         "quicSettings": {}
