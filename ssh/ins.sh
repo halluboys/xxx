@@ -273,9 +273,15 @@ rm -rf /root/vnstat-2.6
 #-subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/CN=$commonname/emailAddress=$email"
 #cat key.pem cert.pem >> /etc/stunnel5/stunnel5.pem
 
+# install fail2ban
+apt -y install fail2ban
 
-
-mkdir /usr/local/ddos
+# Instal DDOS Flate
+if [ -d '/usr/local/ddos' ]; then
+	echo; echo; echo "Please un-install the previous version first"
+	exit 0
+else
+	mkdir /usr/local/ddos
 fi
 clear
 echo; echo 'Installing DOS-Deflate 0.6'; echo
