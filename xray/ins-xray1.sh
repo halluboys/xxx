@@ -1,5 +1,5 @@
 #!/bin/bash
-# My Telegram : https://t.me/sampiiiiu
+# My Telegram : https://t.me/
 # ==========================================
 # Color
 bd='\e[1m'
@@ -112,9 +112,9 @@ cat > /etc/xray/config.json << END
         "kcpSettings": {},
         "httpSettings": {},
         "wsSettings": {
-          "path": "/haluboy",
+          "path": "/vmess/",
           "headers": {
-            "Host": ""
+            "Host": "$domain"
           }
         },
         "quicSettings": {}
