@@ -56,9 +56,9 @@ mkdir /var/lib/akbarstorevpn;
 echo "IP=" >> /var/lib/akbarstorevpn/ipvps.conf
 wget https://${akbarvpn}/cf.sh && chmod +x cf.sh && ./cf.sh
 #install v2ray
-wget https://${akbarvpnnnnnn}/ins-xray1.sh && chmod +x ins-xray1.sh && screen -S xray ./ins-xray1.sh
+wget https://${akbarvpnnnnnn}/ins-xray.sh && chmod +x ins-xray.sh && screen -S xray ./ins-xray.sh
 #install ssh ovpn
-wget https://${akbarvpn}/ssh-vpn1.sh && chmod +x ssh-vpn1.sh && screen -S ssh-vpn ./ssh-vpn1.sh
+wget https://${akbarvpn}/ssh-vpn.sh && chmod +x ssh-vpn.sh && screen -S ssh-vpn ./ssh-vpn.sh
 wget https://${akbarvpnn}/sstp.sh && chmod +x sstp.sh && screen -S sstp ./sstp.sh
 #install ssr
 wget https://${akbarvpnnn}/ssr.sh && chmod +x ssr.sh && screen -S ssr ./ssr.sh
@@ -73,12 +73,12 @@ wget https://${akbarvpnnnnnnnnn}/edu.sh && chmod +x edu.sh && ./edu.sh
 # Ohp Server
 wget https://${akbarvpnnnnnnnnnn}/ohp.sh && chmod +x ohp.sh && ./ohp.sh
 
-rm -f /root/ssh-vpn1.sh
+rm -f /root/ssh-vpn.sh
 rm -f /root/sstp.sh
 rm -f /root/wg.sh
 rm -f /root/ss.sh
 rm -f /root/ssr.sh
-rm -f /root/ins-xray1.sh
+rm -f /root/ins-xray.sh
 rm -f /root/ipsec.sh
 rm -f /root/set-br.sh
 rm -f /root/edu.sh
