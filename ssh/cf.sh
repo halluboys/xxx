@@ -1,5 +1,5 @@
 #!/bin/bash
-# My Telegram : https://t.me/sampiiiiu
+# My Telegram : https://t.me/
 # ==========================================
 # Color
 RED='\033[0;31m'
@@ -23,9 +23,9 @@ exit 0
 fi
 # ==========================================
 apt install jq curl -y
-DOMAIN=haluboy.org
-sub=$(</dev/urandom tr -dc a-z0-9 | head -c4)
-SUB_DOMAIN=${sub}.haluboy.org
+DOMAIN=sookeystore.com
+sub=$(</dev/urandom tr -dc a-z0-9 | head -c5)
+SUB_DOMAIN=${sub}.sookeystore.com
 CF_ID=hammysayang@gmail.com
 CF_KEY=c8cb595f43fcd359488dc3c72826544fe4638
 set -euo pipefail
