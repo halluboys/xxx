@@ -10546,7 +10546,7 @@
 103.180.161.69,587,SG,HONG KONG Megalayer Technology Co.
 103.3.63.253,46683,SG,Akamai Connected Cloud
 104.248.145.216,443,SG,Digital Ocean
-167.99.73.22:443,SG,Digital Oceano
+167.99.73.22,443,SG,Digital Oceano
 104.248.154.142,8443,SG,Digital Ocean
 119.81.201.154,9089,SG,SoftLayer Technologies
 128.199.171.100,2053,SG,Digital Ocean
