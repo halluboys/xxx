@@ -4848,7 +4848,7 @@
 203.194.112.119,2053,ID,First Cagayan Converge Data Center Inc.
 43.133.145.156,53136,ID,Tencent cloud computing
 35.219.15.90,443,ID,Google Cloud
-103.186.1.209,2053,ID,PT Cloud Hosting Indonesia
+46.254.93.84,443,ID,PT CHI
 35.219.50.99,443,ID,Google Cloud
 43.218.77.16,1443,ID,Amazon.com
 172.232.239.151,587,ID,Akamai Connected Cloud
