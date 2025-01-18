@@ -1,3 +1,4 @@
+103.168.146.169,20132,ID,Herza
 8.218.107.145,31166,ID,PT Deneva
 103.133.223.50,2096,ID,Cloud Teknologi Nusantara
 103.133.223.51,2096,ID,Cloud Teknologi Nusantara
