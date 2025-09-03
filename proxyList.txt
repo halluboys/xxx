@@ -1669,6 +1669,7 @@
 43.218.77.16,1443,ID,Amazon.com, Inc.
 203.194.112.119,8443,ID,CV. Rumahweb Indonesia
 203.194.112.119,2053,ID,CV. Rumahweb Indonesia
+206.84.101.84,443,ID,PT Mitra Visioner Pratama
 43.218.77.16,443,ID,Amazon.com, Inc.
 149.129.250.8,443,ID,Ciputra
 36.95.152.58,12137,ID,PT Telekomunikasi Indonesia
