@@ -1670,6 +1670,7 @@
 203.194.112.119,8443,ID,CV. Rumahweb Indonesia
 203.194.112.119,2053,ID,CV. Rumahweb Indonesia
 43.218.77.16,443,ID,Amazon.com, Inc.
+149.129.250.8,443,ID,Ciputra
 36.95.152.58,12137,ID,PT Telekomunikasi Indonesia
 103.6.207.108,8080,ID,PT Pusat Media Indonesia
 40.113.60.248,2053,IE,Microsoft Corporation
