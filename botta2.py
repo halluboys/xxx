@@ -1551,7 +1551,7 @@ async def buy_family_with_qris(update: Update, context: ContextTypes.DEFAULT_TYP
         )
         
         # Reset state pembelian
-        if 'selected_package' in context.user_
+        if 'selected_package' in context.user:
             del context.user_data['selected_package']
             
     except Exception as e:
@@ -1590,7 +1590,7 @@ async def show_account_info(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         
         # Get balance
         balance_data = get_balance(api_key, id_token)
-        if not balance_
+        if not balance:
             await query.message.edit_text("❌ Gagal mengambil data saldo.")
             return
             
@@ -1754,6 +1754,7 @@ def main() -> None:
 if __name__ == "__main__":
 
     main()
+
 
 
 
