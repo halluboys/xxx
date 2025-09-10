@@ -952,7 +952,7 @@ async def handle_target_number_for_xut_vidio_direct_input(update: Update, contex
             reply_markup = InlineKeyboardMarkup(keyboard)
             await update.message.reply_text(message, reply_markup=reply_markup)
             # Reset state
-            if 'state' in context.user_
+            if 'state' in context.user:
                 del context.user_data['state']
             return
             
@@ -1093,7 +1093,7 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
         # c. Dapatkan data QRIS
         qris_data = get_qris_code(api_key, tokens, transaction_id)
         
-        if not qris_
+        if not qris:
             # Bersihkan context
             cleanup_xut_vidio_direct_context(context)
             await message_obj.reply_text("❌ Gagal mendapatkan data QRIS.")
@@ -1754,5 +1754,6 @@ def main() -> None:
 if __name__ == "__main__":
 
     main()
+
 
 
