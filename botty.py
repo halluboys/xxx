@@ -779,7 +779,7 @@ async def buy_xut_with_qris(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             payment_target=package_code,
         )
         
-        if not payment_methods_
+        if not payment_methods:
             await query.message.edit_text("❌ Gagal mendapatkan metode pembayaran QRIS.")
             return
             
@@ -806,7 +806,7 @@ async def buy_xut_with_qris(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         logger.info("Fetching QRIS code...")
         qris_data = get_qris_code(api_key, tokens, transaction_id)
         
-        if not qris_
+        if not qris:
             await query.message.edit_text("❌ Gagal mendapatkan data QRIS.")
             return
             
@@ -937,7 +937,7 @@ async def handle_target_number_for_xut_vidio_direct_input(update: Update, contex
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(message, reply_markup=reply_markup)
         # Reset state
-        if 'state' in context.user_
+        if 'state' in context.user:
             del context.user_data['state']
         return
         
@@ -977,7 +977,7 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
         success = AuthInstance.set_active_user(int(target_number))
         if not success:
             # Bersihkan context
-            if 'state' in context.user_
+            if 'state' in context.user:
                 del context.user_data['state']
             if 'target_number_for_xut_vidio_direct' in context.user_
                 del context.user_data['target_number_for_xut_vidio_direct']
@@ -1004,7 +1004,7 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
         
         if not tokens:
             # Bersihkan context
-            if 'state' in context.user_
+            if 'state' in context.user:
                 del context.user_data['state']
             if 'target_number_for_xut_vidio_direct' in context.user_
                 del context.user_data['target_number_for_xut_vidio_direct']
@@ -1017,7 +1017,7 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
         packages = get_package_xut()
         if not packages:
             # Bersihkan context
-            if 'state' in context.user_
+            if 'state' in context.user:
                 del context.user_data['state']
             if 'target_number_for_xut_vidio_direct' in context.user_
                 del context.user_data['target_number_for_xut_vidio_direct']
@@ -1030,7 +1030,7 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
         target_package = next((pkg for pkg in packages if pkg.get('number') == 11), None)
         if not target_package:
             # Bersihkan context
-            if 'state' in context.user_
+            if 'state' in context.user:
                 del context.user_data['state']
             if 'target_number_for_xut_vidio_direct' in context.user_
                 del context.user_data['target_number_for_xut_vidio_direct']
@@ -1045,7 +1045,7 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
         
         if not package_details:
             # Bersihkan context
-            if 'state' in context.user_
+            if 'state' in context.user:
                 del context.user_data['state']
             if 'target_number_for_xut_vidio_direct' in context.user_
                 del context.user_data['target_number_for_xut_vidio_direct']
@@ -1067,9 +1067,9 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
             payment_target=package_code,
         )
         
-        if not payment_methods_
+        if not payment_methods:
             # Bersihkan context
-            if 'state' in context.user_
+            if 'state' in context.user:
                 del context.user_data['state']
             if 'target_number_for_xut_vidio_direct' in context.user_
                 del context.user_data['target_number_for_xut_vidio_direct']
@@ -1094,7 +1094,7 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
         
         if not transaction_id:
             # Bersihkan context
-            if 'state' in context.user_
+            if 'state' in context.user:
                 del context.user_data['state']
             if 'target_number_for_xut_vidio_direct' in context.user_
                 del context.user_data['target_number_for_xut_vidio_direct']
@@ -1106,9 +1106,9 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
         # c. Dapatkan data QRIS
         qris_data = get_qris_code(api_key, tokens, transaction_id)
         
-        if not qris_
+        if not qris:
             # Bersihkan context
-            if 'state' in context.user_
+            if 'state' in context.user:
                 del context.user_data['state']
             if 'target_number_for_xut_vidio_direct' in context.user_
                 del context.user_data['target_number_for_xut_vidio_direct']
@@ -1145,7 +1145,7 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
         )
         
         # Bersihkan context
-        if 'state' in context.user_
+        if 'state' in context.user:
             del context.user_data['state']
         if 'target_number_for_xut_vidio_direct' in context.user_
             del context.user_data['target_number_for_xut_vidio_direct']
@@ -1157,7 +1157,7 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
     except Exception as e:
         logger.error(f"Error processing QRIS payment for {target_number} (direct): {e}", exc_info=True)
         # Bersihkan context
-        if 'state' in context.user_
+        if 'state' in context.user:
             del context.user_data['state']
         if 'target_number_for_xut_vidio_direct' in context.user_
             del context.user_data['target_number_for_xut_vidio_direct']
@@ -1213,7 +1213,7 @@ async def process_xut_vidio_direct_pulsa_payment(update: Update, context: Contex
             )
             
         # Bersihkan context
-        if 'state' in context.user_
+        if 'state' in context.user:
             del context.user_data['state']
         if 'target_number_for_xut_vidio_direct' in context.user_
             del context.user_data['target_number_for_xut_vidio_direct']
@@ -1273,7 +1273,7 @@ async def process_xut_vidio_direct_ewallet_payment(update: Update, context: Cont
         await message_obj.reply_text(message, reply_markup=reply_markup, parse_mode='Markdown')
         
         # Bersihkan context
-        if 'state' in context.user_
+        if 'state' in context.user:
             del context.user_data['state']
         if 'target_number_for_xut_vidio_direct' in context.user_
             del context.user_data['target_number_for_xut_vidio_direct']
@@ -1521,7 +1521,7 @@ async def show_account_info(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         
         # Get profile
         profile_data = get_profile(api_key, access_token, id_token)
-        if not profile_
+        if not profile:
             await query.message.edit_text("❌ Gagal mengambil data profil.")
             return
             
@@ -1529,7 +1529,7 @@ async def show_account_info(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         
         # Get balance
         balance_data = get_balance(api_key, id_token)
-        if not balance_
+        if not balance:
             await query.message.edit_text("❌ Gagal mengambil data saldo.")
             return
             
@@ -1685,4 +1685,5 @@ def main() -> None:
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 if __name__ == "__main__":
+
     main()
