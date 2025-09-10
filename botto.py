@@ -1582,7 +1582,7 @@ async def show_account_info(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         
         # Get profile
         profile_data = get_profile(api_key, access_token, id_token)
-        if not profile_
+        if not profile:
             await query.message.edit_text("❌ Gagal mengambil data profil.")
             return
             
@@ -1754,6 +1754,7 @@ def main() -> None:
 if __name__ == "__main__":
 
     main()
+
 
 
 
