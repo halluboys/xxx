@@ -855,7 +855,7 @@ async def buy_xut_with_qris(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         )
         
         # Reset state pembelian
-        if 'selected_package' in context.user_
+        if 'selected_package' in context.user:
             del context.user_data['selected_package']
             
     except Exception as e:
@@ -1754,4 +1754,5 @@ def main() -> None:
 if __name__ == "__main__":
 
     main()
+
 
