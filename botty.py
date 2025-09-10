@@ -114,10 +114,10 @@ async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     
     # --- PERUBAHAN: Tambahkan tombol Login Cepat ---
     main_buttons = [
-        InlineKeyboardButton("🔓 Login Cepat", callback_data='quick_login_start'), # Tombol baru
-        InlineKeyboardButton("1. Login/Ganti akun", callback_data='login_menu'),
-        InlineKeyboardButton("2. Lihat Paket Saya", callback_data='view_packages'),
-        InlineKeyboardButton("🎬 XUT Vidio (DIRECT)", callback_data='buy_xut_vidio_direct'), # Langsung ke Vidio
+        InlineKeyboardButton("1. Login Cepat", callback_data='quick_login_start'), # Tombol baru
+        #InlineKeyboardButton("1. Login/Ganti akun", callback_data='login_menu'),
+        InlineKeyboardButton("2. XLUNLI", callback_data='buy_xut_vidio_direct'), # Langsung ke Vidio
+        InlineKeyboardButton("3. Lihat Paket Saya", callback_data='view_packages'),
         # InlineKeyboardButton("3. Paket ALL XUT", callback_data='buy_xut'),
         InlineKeyboardButton("4. Family Code", callback_data='buy_family'),
         # [InlineKeyboardButton("5. Family Code (Enterprise)", callback_data='buy_family_enterprise')],
@@ -133,11 +133,11 @@ async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    welcome_message = "*TEMBAK PAKET XLUNLI!*\n\n"
+    welcome_message = "*TEMBAK PAKET XLUNLIMITED*\n\n"
     
     # Tampilkan informasi akun aktif jika ada
     if active_user:
-        welcome_message += f"*Nomor Aktif:* `{active_user['number']}`\n\n"
+        welcome_message += f"*✅ Nomor Aktif:* `{active_user['number']}`\n\n"
     else:
         welcome_message += "🔐 *Status:* Belum login\n\n"
         
@@ -160,7 +160,6 @@ async def quick_login_start(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         "🔓 *Login Cepat*\n\n"
         "Silakan kirimkan *nomor XL* Anda yang terdaftar di MyXL.\n"
         "Format: `628XXXXXXXXXX` (awali dengan 62)\n\n"
-        "Contoh: `6281234567890`"
     )
 
     # Simpan state bahwa user sedang menunggu input nomor untuk login cepat
@@ -1645,4 +1644,5 @@ def main() -> None:
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 if __name__ == "__main__":
+
     main()
