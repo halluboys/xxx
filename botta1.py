@@ -820,7 +820,7 @@ async def buy_xut_with_qris(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         logger.info("Fetching QRIS code...")
         qris_data = get_qris_code(api_key, tokens, transaction_id)
         
-        if not qris_
+        if not qris:
             await query.message.edit_text("❌ Gagal mendapatkan data QRIS.")
             return
             
@@ -1754,3 +1754,4 @@ def main() -> None:
 if __name__ == "__main__":
 
     main()
+
