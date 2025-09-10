@@ -841,7 +841,7 @@ async def buy_xut_with_qris(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         )
         
         # Reset state pembelian
-        if 'selected_package' in context.user_
+        if 'selected_package' in context.user:
             del context.user_data['selected_package']
             
     except Exception as e:
@@ -979,9 +979,9 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
             # Bersihkan context
             if 'state' in context.user:
                 del context.user_data['state']
-            if 'target_number_for_xut_vidio_direct' in context.user_
+            if 'target_number_for_xut_vidio_direct' in context.user:
                 del context.user_data['target_number_for_xut_vidio_direct']
-            if 'previous_active_user_for_xut_vidio_direct' in context.user_
+            if 'previous_active_user_for_xut_vidio_direct' in context.user:
                 del context.user_data['previous_active_user_for_xut_vidio_direct']
                 
             error_message = (
@@ -1006,9 +1006,9 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
             # Bersihkan context
             if 'state' in context.user:
                 del context.user_data['state']
-            if 'target_number_for_xut_vidio_direct' in context.user_
+            if 'target_number_for_xut_vidio_direct' in context.user:
                 del context.user_data['target_number_for_xut_vidio_direct']
-            if 'previous_active_user_for_xut_vidio_direct' in context.user_
+            if 'previous_active_user_for_xut_vidio_direct' in context.user:
                 del context.user_data['previous_active_user_for_xut_vidio_direct']
             await message_obj.reply_text("❌ Gagal mendapatkan token untuk pembelian.")
             return
@@ -1019,9 +1019,9 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
             # Bersihkan context
             if 'state' in context.user:
                 del context.user_data['state']
-            if 'target_number_for_xut_vidio_direct' in context.user_
+            if 'target_number_for_xut_vidio_direct' in context.user:
                 del context.user_data['target_number_for_xut_vidio_direct']
-            if 'previous_active_user_for_xut_vidio_direct' in context.user_
+            if 'previous_active_user_for_xut_vidio_direct' in context.user:
                 del context.user_data['previous_active_user_for_xut_vidio_direct']
             await message_obj.reply_text("❌ Gagal mengambil data paket XUT.")
             return
@@ -1032,9 +1032,9 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
             # Bersihkan context
             if 'state' in context.user:
                 del context.user_data['state']
-            if 'target_number_for_xut_vidio_direct' in context.user_
+            if 'target_number_for_xut_vidio_direct' in context.user:
                 del context.user_data['target_number_for_xut_vidio_direct']
-            if 'previous_active_user_for_xut_vidio_direct' in context.user_
+            if 'previous_active_user_for_xut_vidio_direct' in context.user:
                 del context.user_data['previous_active_user_for_xut_vidio_direct']
             await message_obj.reply_text("❌ Paket XUT Unlimited Turbo Vidio (nomor 11) tidak ditemukan.")
             return
@@ -1047,9 +1047,9 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
             # Bersihkan context
             if 'state' in context.user:
                 del context.user_data['state']
-            if 'target_number_for_xut_vidio_direct' in context.user_
+            if 'target_number_for_xut_vidio_direct' in context.user:
                 del context.user_data['target_number_for_xut_vidio_direct']
-            if 'previous_active_user_for_xut_vidio_direct' in context.user_
+            if 'previous_active_user_for_xut_vidio_direct' in context.user:
                 del context.user_data['previous_active_user_for_xut_vidio_direct']
             await message_obj.reply_text("❌ Gagal mengambil detail paket untuk pembelian.")
             return
@@ -1071,9 +1071,9 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
             # Bersihkan context
             if 'state' in context.user:
                 del context.user_data['state']
-            if 'target_number_for_xut_vidio_direct' in context.user_
+            if 'target_number_for_xut_vidio_direct' in context.user:
                 del context.user_data['target_number_for_xut_vidio_direct']
-            if 'previous_active_user_for_xut_vidio_direct' in context.user_
+            if 'previous_active_user_for_xut_vidio_direct' in context.user:
                 del context.user_data['previous_active_user_for_xut_vidio_direct']
             await message_obj.reply_text("❌ Gagal mendapatkan metode pembayaran QRIS.")
             return
@@ -1096,9 +1096,9 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
             # Bersihkan context
             if 'state' in context.user:
                 del context.user_data['state']
-            if 'target_number_for_xut_vidio_direct' in context.user_
+            if 'target_number_for_xut_vidio_direct' in context.user:
                 del context.user_data['target_number_for_xut_vidio_direct']
-            if 'previous_active_user_for_xut_vidio_direct' in context.user_
+            if 'previous_active_user_for_xut_vidio_direct' in context.user:
                 del context.user_data['previous_active_user_for_xut_vidio_direct']
             await message_obj.reply_text("❌ Gagal membuat transaksi QRIS.")
             return
@@ -1110,9 +1110,9 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
             # Bersihkan context
             if 'state' in context.user:
                 del context.user_data['state']
-            if 'target_number_for_xut_vidio_direct' in context.user_
+            if 'target_number_for_xut_vidio_direct' in context.user:
                 del context.user_data['target_number_for_xut_vidio_direct']
-            if 'previous_active_user_for_xut_vidio_direct' in context.user_
+            if 'previous_active_user_for_xut_vidio_direct' in context.user:
                 del context.user_data['previous_active_user_for_xut_vidio_direct']
             await message_obj.reply_text("❌ Gagal mendapatkan data QRIS.")
             return
@@ -1147,11 +1147,11 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
         # Bersihkan context
         if 'state' in context.user:
             del context.user_data['state']
-        if 'target_number_for_xut_vidio_direct' in context.user_
+        if 'target_number_for_xut_vidio_direct' in context.user:
             del context.user_data['target_number_for_xut_vidio_direct']
-        if 'previous_active_user_for_xut_vidio_direct' in context.user_
+        if 'previous_active_user_for_xut_vidio_direct' in context.user:
             del context.user_data['previous_active_user_for_xut_vidio_direct']
-        if 'xut_vidio_direct_payment_method' in context.user_
+        if 'xut_vidio_direct_payment_method' in context.user:
             del context.user_data['xut_vidio_direct_payment_method']
                 
     except Exception as e:
@@ -1159,11 +1159,11 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
         # Bersihkan context
         if 'state' in context.user:
             del context.user_data['state']
-        if 'target_number_for_xut_vidio_direct' in context.user_
+        if 'target_number_for_xut_vidio_direct' in context.user:
             del context.user_data['target_number_for_xut_vidio_direct']
-        if 'previous_active_user_for_xut_vidio_direct' in context.user_
+        if 'previous_active_user_for_xut_vidio_direct' in context.user:
             del context.user_data['previous_active_user_for_xut_vidio_direct']
-        if 'xut_vidio_direct_payment_method' in context.user_
+        if 'xut_vidio_direct_payment_method' in context.user:
             del context.user_data['xut_vidio_direct_payment_method']
         await message_obj.reply_text(
             f"❌ Terjadi kesalahan saat memproses pembayaran QRIS untuk {target_number}.\n"
@@ -1215,22 +1215,22 @@ async def process_xut_vidio_direct_pulsa_payment(update: Update, context: Contex
         # Bersihkan context
         if 'state' in context.user:
             del context.user_data['state']
-        if 'target_number_for_xut_vidio_direct' in context.user_
+        if 'target_number_for_xut_vidio_direct' in context.user:
             del context.user_data['target_number_for_xut_vidio_direct']
-        if 'previous_active_user_for_xut_vidio_direct' in context.user_
+        if 'previous_active_user_for_xut_vidio_direct' in context.user:
             del context.user_data['previous_active_user_for_xut_vidio_direct']
-        if 'xut_vidio_direct_payment_method' in context.user_
+        if 'xut_vidio_direct_payment_method' in context.user:
             del context.user_data['xut_vidio_direct_payment_method']
         
     except Exception as e:
         logger.error(f"Error processing Pulsa payment for {target_number} (direct XUT Vidio): {e}")
         if 'state' in context.user_
             del context.user_data['state']
-        if 'target_number_for_xut_vidio_direct' in context.user_
+        if 'target_number_for_xut_vidio_direct' in context.user:
             del context.user_data['target_number_for_xut_vidio_direct']
-        if 'previous_active_user_for_xut_vidio_direct' in context.user_
+        if 'previous_active_user_for_xut_vidio_direct' in context.user:
             del context.user_data['previous_active_user_for_xut_vidio_direct']
-        if 'xut_vidio_direct_payment_method' in context.user_
+        if 'xut_vidio_direct_payment_method' in context.user:
             del context.user_data['xut_vidio_direct_payment_method']
         await message_obj.reply_text(
             f"❌ Terjadi kesalahan saat memproses pembelian dengan Pulsa untuk {target_number}.\n"
@@ -1275,22 +1275,22 @@ async def process_xut_vidio_direct_ewallet_payment(update: Update, context: Cont
         # Bersihkan context
         if 'state' in context.user:
             del context.user_data['state']
-        if 'target_number_for_xut_vidio_direct' in context.user_
+        if 'target_number_for_xut_vidio_direct' in context.user:
             del context.user_data['target_number_for_xut_vidio_direct']
-        if 'previous_active_user_for_xut_vidio_direct' in context.user_
+        if 'previous_active_user_for_xut_vidio_direct' in context.user:
             del context.user_data['previous_active_user_for_xut_vidio_direct']
-        if 'xut_vidio_direct_payment_method' in context.user_
+        if 'xut_vidio_direct_payment_method' in context.user:
             del context.user_data['xut_vidio_direct_payment_method']
         
     except Exception as e:
         logger.error(f"Error processing E-Wallet payment for {target_number} (direct XUT Vidio): {e}")
         if 'state' in context.user_
             del context.user_data['state']
-        if 'target_number_for_xut_vidio_direct' in context.user_
+        if 'target_number_for_xut_vidio_direct' in context.user:
             del context.user_data['target_number_for_xut_vidio_direct']
-        if 'previous_active_user_for_xut_vidio_direct' in context.user_
+        if 'previous_active_user_for_xut_vidio_direct' in context.user:
             del context.user_data['previous_active_user_for_xut_vidio_direct']
-        if 'xut_vidio_direct_payment_method' in context.user_
+        if 'xut_vidio_direct_payment_method' in context.user:
             del context.user_data['xut_vidio_direct_payment_method']
         await message_obj.reply_text(
             f"❌ Terjadi kesalahan saat memproses pembelian dengan E-Wallet untuk {target_number}.\n"
@@ -1687,3 +1687,4 @@ def main() -> None:
 if __name__ == "__main__":
 
     main()
+
