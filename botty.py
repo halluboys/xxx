@@ -1224,7 +1224,7 @@ async def process_xut_vidio_direct_pulsa_payment(update: Update, context: Contex
         
     except Exception as e:
         logger.error(f"Error processing Pulsa payment for {target_number} (direct XUT Vidio): {e}")
-        if 'state' in context.user_
+        if 'state' in context.user:
             del context.user_data['state']
         if 'target_number_for_xut_vidio_direct' in context.user:
             del context.user_data['target_number_for_xut_vidio_direct']
@@ -1687,4 +1687,5 @@ def main() -> None:
 if __name__ == "__main__":
 
     main()
+
 
