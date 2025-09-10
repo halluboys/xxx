@@ -268,7 +268,7 @@ async def handle_phone_number_input(update: Update, context: ContextTypes.DEFAUL
                     "Silakan login terlebih dahulu melalui menu 'Login/Ganti akun'."
                 )
                 # Reset state
-                if 'state' in context.user_
+                if 'state' in context.user:
                     del context.user_data['state']
                 return
                 
@@ -277,7 +277,7 @@ async def handle_phone_number_input(update: Update, context: ContextTypes.DEFAUL
             
             if success:
                 # Reset state login cepat
-                if 'state' in context.user_
+                if 'state' in context.user:
                     del context.user_data['state']
                     
                 await update.message.reply_text(
@@ -297,7 +297,7 @@ async def handle_phone_number_input(update: Update, context: ContextTypes.DEFAUL
                     f"2. Atau kembali ke menu utama."
                 )
                 # Reset state
-                if 'state' in context.user_
+                if 'state' in context.user:
                     del context.user_data['state']
                     
         except Exception as e:
@@ -307,7 +307,7 @@ async def handle_phone_number_input(update: Update, context: ContextTypes.DEFAUL
                 "Silakan coba lagi atau hubungi administrator."
             )
             # Reset state
-            if 'state' in context.user_
+            if 'state' in context.user:
                 del context.user_data['state']
         return # Hentikan eksekusi fungsi setelah menangani login cepat
     # --- AKHIR PERUBAHAN ---
@@ -1690,4 +1690,5 @@ def main() -> None:
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 if __name__ == "__main__":
+
     main()
