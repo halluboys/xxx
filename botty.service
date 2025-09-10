@@ -1,0 +1,24 @@
+[Unit]
+Description=MyXL Telegram Bot
+After=network.target
+
+[Service]
+Type=simple
+User=bottyuser
+Group=bottygroup
+
+WorkingDirectory=/root/botty
+
+# Pastikan path ke python dalam venv dan bot_telegram.py benar
+ExecStart=/root/botty/venv/bin/python /root/botty/botty.py
+
+Restart=always
+RestartSec=10
+TimeoutStopSec=30
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=botty
+
+[Install]
+WantedBy=multi-user.target
