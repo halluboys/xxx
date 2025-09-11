@@ -776,7 +776,7 @@ async def buy_xut_with_qris(update: Update, context: ContextTypes.DEFAULT_TYPE) 
             payment_target=package_code,
         )
         
-        if not payment_methods_
+        if not payment_methods:
             await query.message.edit_text("❌ Gagal mendapatkan metode pembayaran QRIS.")
             return
             
@@ -1058,7 +1058,7 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
             payment_target=package_code,
         )
         
-        if not payment_methods_
+        if not payment_methods:
             # Bersihkan context
             keys_to_remove = ['state', 'xut_vidio_direct_payment_method', 'target_number_for_xut_vidio_direct', 'previous_active_user_for_xut_vidio_direct']
             for key in keys_to_remove:
@@ -1095,7 +1095,7 @@ async def process_xut_vidio_direct_qris_payment(update: Update, context: Context
         from purchase_api import get_qris_code # Import di sini
         qris_data = get_qris_code(api_key, tokens, transaction_id)
         
-        if not qris_
+        if not qris:
             # Bersihkan context
             keys_to_remove = ['state', 'xut_vidio_direct_payment_method', 'target_number_for_xut_vidio_direct', 'previous_active_user_for_xut_vidio_direct']
             for key in keys_to_remove:
@@ -1653,4 +1653,5 @@ def main() -> None:
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 if __name__ == "__main__":
+
     main()
