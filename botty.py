@@ -134,12 +134,10 @@ async def buy_xut_vidio_direct(update: Update, context: ContextTypes.DEFAULT_TYP
         }
         # 8. Tampilkan detail paket dan opsi pembayaran
         message = (
-            f"📦 *Detail Paket XUT*
-"
-            f"🏷 *Nama:* {package_name}
-"
-            f"💰 *Harga:* Rp {package_price}
-"
+        message = (
+            f"📦 *Detail Paket XUT*\n"
+            f"🏷 *Nama:* {package_name}\n"
+            f"💰 *Harga:* Rp {package_price}\n"
             "Pilih metode pembayaran:"
         )
         keyboard = [
@@ -174,15 +172,12 @@ async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     if active_user:
         keyboard.append([InlineKeyboardButton("💳 Akun Saya", callback_data='account_info')])
     reply_markup = InlineKeyboardMarkup(keyboard)
-    welcome_message = " *TEMBAK PAKET XLUNLI*
-"
+    welcome_message = " *TEMBAK PAKET XLUNLI*\n"
     # Tampilkan informasi akun aktif jika ada
     if active_user:
         welcome_message += f" *Nomor Aktif:* `{active_user['number']}`
-"
     else:
-        welcome_message += "🔐 *Status:* Belum login
-"
+        welcome_message = " *TEMBAK PAKET XLUNLI*\n"
     welcome_message += "Silakan pilih menu di bawah ini:"
     if update.message:
         await update.message.reply_text(welcome_message, reply_markup=reply_markup, parse_mode='Markdown')
@@ -1022,3 +1017,4 @@ def main() -> None:
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 if __name__ == "__main__":
     main()
+
