@@ -263,7 +263,7 @@ async def handle_phone_number_input(update: Update, context: ContextTypes.DEFAUL
                 # Reset state dan mulai OTP flow
             context.user_data['temp_phone'] = phone_number
             context.user_data['state'] = 'waiting_otp'
-                await request_and_send_otp(update, phone_number)
+            await request_and_send_otp(update, phone_number)
             return
         else:
             # Jika belum ada, minta OTP
@@ -945,4 +945,5 @@ def main() -> None:
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 if __name__ == "__main__":
     main()
+
 
