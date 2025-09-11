@@ -78,11 +78,6 @@ def format_benefit(benefit):
     else:
         return f"• {name}: {total}"
 # === HANDLER UTAMA ===
-# Di bagian import, pastikan Anda sudah mengimpor fungsi yang diperlukan
-# from paket_xut import get_package_xut
-# Di bagian atas bot_telegram.py, pastikan Anda sudah mengimpor:
-# from paket_xut import get_package_xut
-# from api_request import get_package # Tambahkan ini jika belum ada
 async def buy_xut_vidio_direct(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Langsung tampilkan detail paket XUT Unlimited Turbo Vidio (nomor 11)"""
     query = update.callback_query
@@ -134,7 +129,6 @@ async def buy_xut_vidio_direct(update: Update, context: ContextTypes.DEFAULT_TYP
         }
         # 8. Tampilkan detail paket dan opsi pembayaran
         message = (
-        message = (
             f"📦 *Detail Paket XUT*\n"
             f"🏷 *Nama:* {package_name}\n"
             f"💰 *Harga:* Rp {package_price}\n"
@@ -160,11 +154,12 @@ async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     """Menampilkan menu utama"""
     # Periksa akun aktif
     active_user = AuthInstance.get_active_user()
+    # Menu utama tetap sama, hanya ganti callback_data untuk ganti akun
     main_buttons = [
         InlineKeyboardButton("1. Login", callback_data='login_menu'),
         InlineKeyboardButton("2. Ganti Akun", callback_data='switch_account_menu'),
         InlineKeyboardButton("3. Lihat Paket Saya", callback_data='view_packages'),
-        InlineKeyboardButton(" XLUNLI", callback_data='buy_xut_vidio_direct'), # Langsung ke Vidio
+        InlineKeyboardButton(" XLUNLI", callback_data='buy_xut_vidio_direct'),
         InlineKeyboardButton("5. Family Code", callback_data='buy_family'),
     ]
     keyboard = [main_buttons[i:i + 2] for i in range(0, len(main_buttons), 2)]
@@ -175,9 +170,9 @@ async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     welcome_message = " *TEMBAK PAKET XLUNLI*\n"
     # Tampilkan informasi akun aktif jika ada
     if active_user:
-        welcome_message += f" *Nomor Aktif:* `{active_user['number']}`
+        welcome_message += f" *Nomor Aktif:* `{active_user['number']}`\n"
     else:
-        welcome_message = " *TEMBAK PAKET XLUNLI*\n"
+        welcome_message += "🔐 *Status:* Belum login\n"
     welcome_message += "Silakan pilih menu di bawah ini:"
     if update.message:
         await update.message.reply_text(welcome_message, reply_markup=reply_markup, parse_mode='Markdown')
@@ -192,12 +187,9 @@ async def initiate_login(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     if query:
         await query.answer()
     message = (
-        "📱 *Login ke MyXL*
-"
-        "Silakan kirimkan nomor telepon Anda yang terdaftar di MyXL.
-"
-        "Format: `628XXXXXXXXXX` (awali dengan 62)
-"
+        "📱 *Login ke MyXL*\n"
+        "Silakan kirimkan nomor telepon Anda yang terdaftar di MyXL.\n"
+        "Format: `628XXXXXXXXXX` (awali dengan 62)\n"
         "Contoh: `6281234567890`"
     )
     # Simpan state bahwa user sedang menunggu input nomor untuk login
@@ -217,12 +209,9 @@ async def initiate_switch_account(update: Update, context: ContextTypes.DEFAULT_
     if query:
         await query.answer()
     message = (
-        "🔄 *Ganti Akun*
-"
-        "Silakan kirimkan nomor telepon yang ingin diaktifkan.
-"
-        "Format: `628XXXXXXXXXX` (awali dengan 62)
-"
+        "🔄 *Ganti Akun*\n"
+        "Silakan kirimkan nomor telepon yang ingin diaktifkan.\n"
+        "Format: `628XXXXXXXXXX` (awali dengan 62)\n"
         "Contoh: `6281234567890`"
     )
     # Simpan state bahwa user sedang menunggu input nomor untuk ganti akun
@@ -246,12 +235,9 @@ async def handle_phone_number_input(update: Update, context: ContextTypes.DEFAUL
     # Validasi format nomor
     if not phone_number.startswith("628") or not phone_number[1:].isdigit() or len(phone_number) < 10 or len(phone_number) > 15:
         await update.message.reply_text(
-            "❌ Nomor telepon tidak valid.
-"
-            "Pastikan formatnya adalah `628XXXXXXXXXX` (awali dengan 62).
-"
-            "Contoh: `6281234567890`
-"
+            "❌ Nomor telepon tidak valid.\n"
+            "Pastikan formatnya adalah `628XXXXXXXXXX` (awali dengan 62).\n"
+            "Contoh: `6281234567890`\n"
             "Silakan kirimkan nomor yang benar:"
         )
         return
@@ -271,8 +257,7 @@ async def handle_phone_number_input(update: Update, context: ContextTypes.DEFAUL
                 await show_main_menu(update, context)
             else:
                  await update.message.reply_text(
-                    f"❌ Gagal mengaktifkan akun `{phone_number}`. Token mungkin sudah kadaluarsa.
-"
+                    f"❌ Gagal mengaktifkan akun `{phone_number}`. Token mungkin sudah kadaluarsa.\n"
                     "Silakan login ulang untuk akun ini.",
                     parse_mode='Markdown'
                 )
@@ -297,8 +282,7 @@ async def handle_phone_number_input(update: Update, context: ContextTypes.DEFAUL
                 await show_main_menu(update, context)
             else:
                  await update.message.reply_text(
-                    f"❌ Gagal mengaktifkan akun `{phone_number}`. Token mungkin sudah kadaluarsa.
-"
+                    f"❌ Gagal mengaktifkan akun `{phone_number}`. Token mungkin sudah kadaluarsa.\n"
                     "Silakan login ulang untuk akun ini.",
                     parse_mode='Markdown'
                 )
@@ -323,8 +307,7 @@ async def request_and_send_otp(update: Update, phone_number: str) -> None:
             await update.message.reply_text("❌ Gagal mengirim OTP.")
             return
         await update.message.reply_text(
-            f"✅ OTP telah dikirim ke nomor {phone_number}.
-"
+            f"✅ OTP telah dikirim ke nomor {phone_number}.\n"
             "Silakan kirimkan kode OTP 6 digit yang Anda terima:"
         )
     except Exception as e:
@@ -340,10 +323,8 @@ async def handle_otp_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -
     # Validasi format OTP
     if not otp.isdigit() or len(otp) != 6:
         await update.message.reply_text(
-            "❌ Kode OTP tidak valid.
-"
-            "Pastikan OTP terdiri dari 6 digit angka.
-"
+            "❌ Kode OTP tidak valid.\n"
+            "Pastikan OTP terdiri dari 6 digit angka.\n"
             "Silakan kirimkan OTP yang benar:"
         )
         return
@@ -366,8 +347,7 @@ async def handle_otp_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         # Reset state
         context.user_data.clear()
         await update.message.reply_text(
-            "✅ Login berhasil!
-"
+            "✅ Login berhasil!\n"
             "Anda sekarang dapat menggunakan semua fitur bot."
         )
         # Tampilkan menu utama
@@ -405,8 +385,7 @@ async def view_packages(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         if not quotas:
             await query.message.edit_text("📭 Anda tidak memiliki paket aktif.")
             return
-        message = "*📦 Paket Saya:*
-"
+        message = "*📦 Paket Saya:*\n"
         for i, quota in enumerate(quotas, 1):
             quota_code = quota["quota_code"]
             name = quota["name"]
@@ -419,16 +398,11 @@ async def view_packages(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
             if package_details:
                 family_code = package_details["package_family"]["package_family_code"]
             message += (
-                f"📦 *Paket {i}*
-"
-                f"   Nama: {name}
-"
-                f"   Kode Kuota: `{quota_code}`
-"
-                f"   Kode Family: `{family_code}`
-"
-                f"   Kode Grup: `{group_code}`
-"
+                f"📦 *Paket {i}*\n"
+                f"   Nama: {name}\n"
+                f"   Kode Kuota: `{quota_code}`\n"
+                f"   Kode Family: `{family_code}`\n"
+                f"   Kode Grup: `{group_code}`\n"
             )
         keyboard = [[InlineKeyboardButton("🔙 Kembali", callback_data='main_menu')]]
         reply_markup = InlineKeyboardMarkup(keyboard)
@@ -453,12 +427,10 @@ async def buy_xut_packages(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             return
         # Simpan daftar paket di context
         context.user_data['xut_packages'] = packages
-        message = "*🛒 Paket XUT (Unli Turbo)*
-"
+        message = "*🛒 Paket XUT (Unli Turbo)*\n"
         keyboard = []
         for index, pkg in enumerate(packages):
-            message += f"{pkg['number']}. {pkg['name']} - Rp {pkg['price']}
-"
+            message += f"{pkg['number']}. {pkg['name']} - Rp {pkg['price']}\n"
             keyboard.append([InlineKeyboardButton(
                 f"{pkg['number']}. {pkg['name']} (Rp {pkg['price']})",
                 callback_data=f'xut_select_{index}'  # Gunakan index yang pendek
@@ -512,22 +484,14 @@ async def show_xut_package_details(update: Update, context: ContextTypes.DEFAULT
             'benefits': benefits
         }
         # Format pesan detail
-        benefits_text = "
-".join([format_benefit(b) for b in benefits]) if benefits else "Tidak ada informasi benefit."
+        benefits_text = "\n".join([format_benefit(b) for b in benefits]) if benefits else "Tidak ada informasi benefit."
         message = (
-            f"📦 *Detail Paket XUT*
-"
-            f"🏷 *Nama:* {package_name}
-"
-            f"💰 *Harga:* Rp {price}
-"
-            f"📅 *Masa Aktif:* {validity} hari
-"
-            f"🔷 *Benefits:*
-{benefits_text}
-"
-            f"📝 *Syarat & Ketentuan:*
-{tnc[:300]}..." # Batasi panjang T&C
+            f"📦 *Detail Paket XUT*\n"
+            f"🏷 *Nama:* {package_name}\n"
+            f"💰 *Harga:* Rp {price}\n"
+            f"📅 *Masa Aktif:* {validity} hari\n"
+            f"🔷 *Benefits:*\n{benefits_text}\n"
+            f"📝 *Syarat & Ketentuan:*\n{tnc[:300]}..." # Batasi panjang T&C
         )
         keyboard = [
             [InlineKeyboardButton("💳 Beli dengan Pulsa", callback_data='buy_xut_pulsa')],
@@ -563,21 +527,18 @@ async def buy_xut_with_pulsa(update: Update, context: ContextTypes.DEFAULT_TYPE)
         result = purchase_package(api_key, tokens, package_code)
         if result and result.get("status") == "SUCCESS":
             await query.message.edit_text(
-                "✅ Pembelian paket dengan Pulsa berhasil diinisiasi!
-"
+                "✅ Pembelian paket dengan Pulsa berhasil diinisiasi!\n"
                 "Silakan cek hasil pembelian di aplikasi MyXL."
             )
         else:
             await query.message.edit_text(
-                "❌ Gagal membeli paket dengan Pulsa.
-"
+                "❌ Gagal membeli paket dengan Pulsa.\n"
                 "Silakan coba lagi atau gunakan metode pembayaran lain."
             )
     except Exception as e:
         logger.error(f"Error processing Pulsa payment: {e}")
         await query.message.edit_text(
-            "❌ Terjadi kesalahan saat memproses pembelian dengan Pulsa.
-"
+            "❌ Terjadi kesalahan saat memproses pembelian dengan Pulsa.\n"
             "Silakan coba lagi."
         )
 async def buy_xut_with_ewallet(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -590,20 +551,13 @@ async def buy_xut_with_ewallet(update: Update, context: ContextTypes.DEFAULT_TYP
         return
     # Simulasi pembelian dengan E-Wallet
     message = (
-        "💳 *Pembelian dengan E-Wallet*
-"
-        "Untuk menyelesaikan pembelian dengan E-Wallet:
-"
-        "1. Buka aplikasi pembayaran Anda (DANA, OVO, GoPay, ShopeePay)
-"
-        "2. Pilih menu Bayar atau Scan QR
-"
-        "3. Gunakan kode pembayaran berikut:
-"
-        f"   `EW-{package_info['code']}-{int(package_info['price'])}`
-"
-        f"4. Konfirmasi pembayaran sebesar Rp {package_info['price']}
-"
+        "💳 *Pembelian dengan E-Wallet*\n"
+        "Untuk menyelesaikan pembelian dengan E-Wallet:\n"
+        "1. Buka aplikasi pembayaran Anda (DANA, OVO, GoPay, ShopeePay)\n"
+        "2. Pilih menu Bayar atau Scan QR\n"
+        "3. Gunakan kode pembayaran berikut:\n"
+        f"   `EW-{package_info['code']}-{int(package_info['price'])}`\n"
+        f"4. Konfirmasi pembayaran sebesar Rp {package_info['price']}\n"
         "Setelah pembayaran berhasil, paket akan otomatis masuk ke akun Anda."
     )
     keyboard = [[InlineKeyboardButton("🏠 Menu Utama", callback_data='main_menu')]]
@@ -673,23 +627,17 @@ async def buy_xut_with_qris(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         img_buffer.seek(0)
         # Kirim QR Code sebagai foto
         caption = (
-            f"📲 *Pembayaran QRIS*
-"
-            f"Silakan scan QR Code di bawah ini untuk menyelesaikan pembayaran.
-"
-            f"📦 *Paket:* {package_name}
-"
-            f"💰 *Harga:* Rp {price}
-"
+            f"📲 *Pembayaran QRIS*\n"
+            f"Silakan scan QR Code di bawah ini untuk menyelesaikan pembayaran.\n"
+            f"📦 *Paket:* {package_name}\n"
+            f"💰 *Harga:* Rp {price}\n"
             f"Setelah pembayaran berhasil, paket akan otomatis masuk ke akun Anda."
         )
         await query.message.reply_photo(photo=img_buffer, caption=caption, parse_mode='Markdown')
         # Edit pesan sebelumnya
         await query.message.edit_text(
-            "✅ QR Code pembayaran telah dikirim!
-"
-            "Silakan scan QR Code yang dikirim di atas untuk menyelesaikan pembayaran.
-"
+            "✅ QR Code pembayaran telah dikirim!\n"
+            "Silakan scan QR Code yang dikirim di atas untuk menyelesaikan pembayaran.\n"
             "Setelah pembayaran berhasil, paket akan otomatis masuk ke akun Anda."
         )
         # Reset state pembelian
@@ -698,8 +646,7 @@ async def buy_xut_with_qris(update: Update, context: ContextTypes.DEFAULT_TYPE) 
     except Exception as e:
         logger.error(f"Error processing QRIS payment: {e}", exc_info=True)
         await query.message.edit_text(
-            "❌ Terjadi kesalahan saat memproses pembayaran QRIS.
-"
+            "❌ Terjadi kesalahan saat memproses pembayaran QRIS.\n"
             "Silakan coba lagi atau hubungi administrator jika masalah berlanjut."
         )
 # === PEMBELIAN PAKET BERDASARKAN FAMILY CODE ===
@@ -755,14 +702,12 @@ async def show_family_packages(update: Update, context: ContextTypes.DEFAULT_TYP
         # Simpan data untuk referensi nanti
         context.user_data['family_data'] = data
         context.user_data['family_packages'] = []
-        message = f"*Family Name:* {data['package_family']['name']}
-"
+        message = f"*Family Name:* {data['package_family']['name']}\n"
         keyboard = []
         option_number = 1
         for variant in package_variants:
             variant_name = variant["name"]
-            message += f"🔹 *Variant:* {variant_name}
-"
+            message += f"🔹 *Variant:* {variant_name}\n"
             for option in variant["package_options"]:
                 option_name = option["name"]
                 price = option["price"]
@@ -773,15 +718,13 @@ async def show_family_packages(update: Update, context: ContextTypes.DEFAULT_TYP
                     "price": price,
                     "code": code
                 })
-                message += f"{option_number}. {option_name} - Rp {price}
-"
+                message += f"{option_number}. {option_name} - Rp {price}\n"
                 keyboard.append([InlineKeyboardButton(
                     f"{option_number}. {option_name} (Rp {price})", 
                     callback_data=f'family_pkg_{option_number}'  # Gunakan nomor yang pendek
                 )])
                 option_number += 1
-        message += "
-00. Kembali ke menu sebelumnya"
+        message += "\n00. Kembali ke menu sebelumnya"
         keyboard.append([InlineKeyboardButton("🔙 Kembali", callback_data='main_menu')])
         reply_markup = InlineKeyboardMarkup(keyboard)
         if hasattr(update, 'callback_query') and update.callback_query:
@@ -837,22 +780,14 @@ async def show_family_package_details(update: Update, context: ContextTypes.DEFA
             'benefits': benefits
         }
         # Format pesan detail
-        benefits_text = "
-".join([format_benefit(b) for b in benefits]) if benefits else "Tidak ada informasi benefit."
+        benefits_text = "\n".join([format_benefit(b) for b in benefits]) if benefits else "Tidak ada informasi benefit."
         message = (
-            f"📦 *Detail Paket Family*
-"
-            f"🏷 *Nama:* {package_name}
-"
-            f"💰 *Harga:* Rp {price}
-"
-            f"📅 *Masa Aktif:* {validity} hari
-"
-            f"🔷 *Benefits:*
-{benefits_text}
-"
-            f"📝 *Syarat & Ketentuan:*
-{tnc[:300]}..." # Batasi panjang T&C
+            f"📦 *Detail Paket Family*\n"
+            f"🏷 *Nama:* {package_name}\n"
+            f"💰 *Harga:* Rp {price}\n"
+            f"📅 *Masa Aktif:* {validity} hari\n"
+            f"🔷 *Benefits:*\n{benefits_text}\n"
+            f"📝 *Syarat & Ketentuan:*\n{tnc[:300]}..." # Batasi panjang T&C
         )
         keyboard = [
             [InlineKeyboardButton("💳 Beli dengan Pulsa", callback_data='buy_family_pulsa')],
@@ -904,12 +839,9 @@ async def show_account_info(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         remaining = balance_data.get("remaining", 0)
         expired_at = balance_data.get("expired_at", "N/A")
         message = (
-            f"👤 *Informasi Akun MyXL*
-"
-            f"📱 *Nomor:* {msisdn}
-"
-            f"💰 *Pulsa:* Rp {remaining:,}
-"
+            f"👤 *Informasi Akun MyXL*\n"
+            f"📱 *Nomor:* {msisdn}\n"
+            f"💰 *Pulsa:* Rp {remaining:,}\n"
             f"📅 *Masa Aktif:* {expired_at}"
         )
         keyboard = [[InlineKeyboardButton("🔙 Kembali", callback_data='main_menu')]]
@@ -943,9 +875,6 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
      # Beli Paket XUT Vidio Langsung
     elif data == 'buy_xut_vidio_direct':  # <-- Tambahkan ini
         await buy_xut_vidio_direct(update, context)
-        # Di button_handler, pastikan ada:
-    elif data == 'buy_xut_vidio_direct_qris':
-        await buy_xut_vidio_direct_with_qris(update, context) # Pastikan fungsi ini ada dan benar
     elif data.startswith('xut_select_'):
         await show_xut_package_details(update, context)
     elif data == 'buy_xut_pulsa':
@@ -1017,4 +946,3 @@ def main() -> None:
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 if __name__ == "__main__":
     main()
-
