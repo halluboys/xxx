@@ -112,15 +112,15 @@ async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     # Periksa akun aktif
     active_user = AuthInstance.get_active_user()
     
-    # --- PERUBAHAN: Tambahkan tombol Login Cepat ---
+    # --- PERUBAHAN: Tambahkan tombol Login Cepat di posisi paling atas ---
     main_buttons = [
         InlineKeyboardButton("🔓 Login Cepat", callback_data='quick_login_start'), # Tombol baru
-        InlineKeyboardButton("1. Login/Ganti akun", callback_data='login_menu'),
+        InlineKeyboardButton("1. Ganti akun", callback_data='login_menu'),
         InlineKeyboardButton("2. Lihat Paket Saya", callback_data='view_packages'),
-        InlineKeyboardButton("🎬 XUT Vidio (DIRECT)", callback_data='buy_xut_vidio_direct_start'),
-        InlineKeyboardButton("3. Paket ALL XUT", callback_data='buy_xut'),
+        InlineKeyboardButton("🎬 XUT Vidio (DIRECT)", callback_data='buy_xut_vidio_direct'),
+        #InlineKeyboardButton("3. Paket ALL XUT", callback_data='buy_xut'),
         InlineKeyboardButton("4. Family Code", callback_data='buy_family'),
-        InlineKeyboardButton("5. Family Code (Enterprise)", callback_data='buy_family_enterprise'),
+        # [InlineKeyboardButton("5. Family Code (Enterprise)", callback_data='buy_family_enterprise')],
     ]
     # --- AKHIR PERUBAHAN ---
     
@@ -133,7 +133,7 @@ async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    welcome_message = "*TEMBAK PAKET XLUNLI!*\n\n"
+    welcome_message = "*TEMBAK PAKET XLUNLIMITED*\n\n"
     
     # Tampilkan informasi akun aktif jika ada
     if active_user:
@@ -160,7 +160,6 @@ async def quick_login_start(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         "🔓 *Login Cepat*\n\n"
         "Silakan kirimkan *nomor XL* Anda yang terdaftar di MyXL.\n"
         "Format: `628XXXXXXXXXX` (awali dengan 62)\n\n"
-        "Contoh: `6281234567890`"
     )
 
     # Simpan state bahwa user sedang menunggu input nomor untuk login cepat
@@ -221,7 +220,6 @@ async def request_otp_step(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         "📱 *Login ke MyXL*\n\n"
         "Silakan kirimkan nomor telepon Anda yang terdaftar di MyXL.\n"
         "Format: `628XXXXXXXXXX` (awali dengan 62)\n\n"
-        "Contoh: `6281234567890`"
     )
     
     # Simpan state bahwa user sedang menunggu input nomor
@@ -265,7 +263,7 @@ async def handle_phone_number_input(update: Update, context: ContextTypes.DEFAUL
                 # Nomor belum pernah login
                 message = (
                     f"❌ Nomor {phone_number} belum pernah login di bot ini.\n\n"
-                    "Silakan login terlebih dahulu melalui menu 'Login/Ganti akun' -> 'Tambah Akun Baru'."
+                    "Silakan login terlebih dahulu untuk nomor tersebut melalui menu 'Login/Ganti akun'."
                 )
                 keyboard = [[InlineKeyboardButton("🏠 Menu Utama", callback_data='main_menu')]]
                 reply_markup = InlineKeyboardMarkup(keyboard)
@@ -291,30 +289,24 @@ async def handle_phone_number_input(update: Update, context: ContextTypes.DEFAUL
                 await show_main_menu(update, context)
             else:
                 # Gagal mengaktifkan, mungkin token kadaluarsa
-                message = (
+                await update.message.reply_text(
                     f"⚠️ Tidak dapat menggunakan akun `{phone_number}` untuk pembelian.\n"
                     f"Kemungkinan penyebab:\n"
                     f"• Token login sudah kadaluarsa.\n\n"
                     f"Silakan:\n"
-                    f"1. Login ulang untuk nomor {phone_number} melalui menu 'Login/Ganti akun' -> 'Tambah Akun Baru'.\n"
+                    f"1. Login ulang untuk nomor {phone_number} melalui menu 'Login/Ganti akun'.\n"
                     f"2. Atau kembali ke menu utama."
                 )
-                keyboard = [[InlineKeyboardButton("🏠 Menu Utama", callback_data='main_menu')]]
-                reply_markup = InlineKeyboardMarkup(keyboard)
-                await update.message.reply_text(message, reply_markup=reply_markup)
                 # Reset state
                 if 'state' in context.user:
                     del context.user_data['state']
                     
         except Exception as e:
             logger.error(f"Error processing quick login for {phone_number}: {e}", exc_info=True)
-            message = (
+            await update.message.reply_text(
                 "❌ Terjadi kesalahan saat memproses login cepat.\n"
                 "Silakan coba lagi atau hubungi administrator."
             )
-            keyboard = [[InlineKeyboardButton("🏠 Menu Utama", callback_data='main_menu')]]
-            reply_markup = InlineKeyboardMarkup(keyboard)
-            await update.message.reply_text(message, reply_markup=reply_markup)
             # Reset state
             if 'state' in context.user:
                 del context.user_data['state']
@@ -391,12 +383,9 @@ async def handle_otp_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             context.user_data['state'] = 'waiting_phone_number' # Kembali ke input nomor
             return
             
-        # --- PERUBAHAN: Simpan token dengan benar ---
-        # Simpan refresh token
+        # Simpan token
         AuthInstance.add_refresh_token(int(phone_number), tokens["refresh_token"])
-        # Set akun aktif
         AuthInstance.set_active_user(int(phone_number))
-        # --- AKHIR PERUBAHAN ---
         
         # Reset state
         context.user_data.clear()
@@ -524,7 +513,10 @@ async def view_packages(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
             return
             
         message = "*📦 Paket Saya:*\n\n"
-        for i, quota in enumerate(quotas, 1):
+        keyboard = []
+        option_number = 1
+        
+        for quota in quotas:
             quota_code = quota["quota_code"]
             name = quota["name"]
             group_code = quota["group_code"]
@@ -536,14 +528,15 @@ async def view_packages(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
                 family_code = package_details["package_family"]["package_family_code"]
                 
             message += (
-                f"📦 *Paket {i}*\n"
+                f"📦 *Paket {option_number}*\n"
                 f"   Nama: {name}\n"
                 f"   Kode Kuota: `{quota_code}`\n"
                 f"   Kode Family: `{family_code}`\n"
                 f"   Kode Grup: `{group_code}`\n\n"
             )
+            option_number += 1
             
-        keyboard = [[InlineKeyboardButton("🔙 Kembali", callback_data='main_menu')]]
+        keyboard.append([InlineKeyboardButton("🔙 Kembali", callback_data='main_menu')])
         reply_markup = InlineKeyboardMarkup(keyboard)
         
         await query.message.edit_text(message, reply_markup=reply_markup, parse_mode='Markdown')
@@ -649,7 +642,7 @@ async def show_xut_package_details(update: Update, context: ContextTypes.DEFAULT
         benefits_text = "\n".join([format_benefit(b) for b in benefits]) if benefits else "Tidak ada informasi benefit."
         
         message = (
-            f"📦 *Detail Paket XUT*\n\n"
+            f"📦 *Detail Paket Unlimited*\n\n"
             f"🏷 *Nama:* {package_name}\n"
             f"💰 *Harga:* Rp {price}\n"
             f"📅 *Masa Aktif:* {validity} hari\n\n"
@@ -838,7 +831,7 @@ async def buy_xut_with_qris(update: Update, context: ContextTypes.DEFAULT_TYPE) 
         )
         
         # Reset state pembelian
-        if 'selected_package' in context.user:
+        if 'selected_package' in context.user_
             del context.user_data['selected_package']
             
     except Exception as e:
@@ -850,419 +843,89 @@ async def buy_xut_with_qris(update: Update, context: ContextTypes.DEFAULT_TYPE) 
 
 # === PEMBELIAN PAKET XUT VIDIO DIRECT ===
 
-async def buy_xut_vidio_direct_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Langsung ke pemilihan metode pembayaran untuk XUT Vidio (nomor 11)"""
+async def buy_xut_vidio_direct(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Langsung tampilkan detail paket XUT Unlimited Turbo Vidio (nomor 11)"""
     query = update.callback_query
     await query.answer()
-
-    # Tampilkan opsi metode pembayaran langsung untuk paket XUT Vidio nomor 11
-    message = (
-        "🎬 *Beli XUT Vidio (Langsung - Nomor 11)*\n\n"
-        "Pilih metode pembayaran:"
-    )
-
-    keyboard = [
-        [InlineKeyboardButton("💳 Pulsa", callback_data='buy_xut_vidio_direct_pulsa')],
-        [InlineKeyboardButton("💳 E-Wallet", callback_data='buy_xut_vidio_direct_ewallet')],
-        [InlineKeyboardButton("📲 QRIS", callback_data='buy_xut_vidio_direct_qris')],
-        [InlineKeyboardButton("🔙 Kembali", callback_data='main_menu')],
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-
-    await query.message.edit_text(message, reply_markup=reply_markup, parse_mode='Markdown')
-
-
-async def handle_xut_vidio_direct_payment_choice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Menangani pilihan metode pembayaran untuk XUT Vidio direct dan meminta nomor tujuan"""
-    query = update.callback_query
-    await query.answer()
-
-    payment_method = query.data.split('_')[-1] # Dapatkan metode pembayaran (pulsa, ewallet, qris)
     
-    # Simpan metode pembayaran yang dipilih
-    context.user_data['xut_vidio_direct_payment_method'] = payment_method
-    
-    # Minta nomor tujuan
-    message = (
-        f"📲 *Pembelian XUT Vidio via {payment_method.capitalize()}*\n\n"
-        "Silakan masukkan *nomor XL* tujuan yang ingin dibelikan paket XUT Unlimited Turbo Vidio (nomor 11).\n\n"
-        "Format: `628XXXXXXXXXX`\n"
-        "Contoh: `6281234567890`"
-    )
-    
-    # Simpan state bahwa user sedang menunggu input nomor tujuan untuk XUT Vidio direct
-    context.user_data['state'] = 'waiting_target_number_for_xut_vidio_direct'
-    
-    keyboard = [[InlineKeyboardButton("🔙 Batal", callback_data='main_menu')]]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    
-    await query.message.edit_text(message, reply_markup=reply_markup, parse_mode='Markdown')
-
-
-async def handle_target_number_for_xut_vidio_direct_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Menangani input nomor tujuan untuk pembelian XUT Vidio direct"""
-    # Cek apakah ini adalah state yang benar
-    if context.user_data.get('state') != 'waiting_target_number_for_xut_vidio_direct':
-        return # Bukan saatnya menerima input ini
-        
-    target_number = update.message.text.strip()
-    
-    # Validasi format nomor
-    if not re.match(r'^628\d{8,12}$', target_number):
-        await update.message.reply_text(
-            "❌ Nomor tidak valid.\n"
-            "Pastikan formatnya adalah `628XXXXXXXXXX`.\n"
-            "Contoh: `6281234567890`\n\n"
-            "Silakan kirimkan nomor yang benar:"
-        )
-        return
-    
-    # Simpan nomor target sementara
-    context.user_data['target_number_for_xut_vidio_direct'] = target_number
-    
-    # Periksa apakah nomor ini sudah pernah login
-    AuthInstance.load_tokens() # Muat ulang token
-    users = AuthInstance.refresh_tokens
-    
-    user_exists = any(str(user['number']) == target_number for user in users)
-    
-    if not user_exists:
-        # Nomor belum pernah login
-        message = (
-            f"❌ Nomor {target_number} belum pernah login di bot ini.\n\n"
-            "Silakan login terlebih dahulu untuk nomor tersebut melalui menu 'Login/Ganti akun'."
-        )
-        keyboard = [[InlineKeyboardButton("🏠 Menu Utama", callback_data='main_menu')]]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        await update.message.reply_text(message, reply_markup=reply_markup)
-        # Reset state
-        if 'state' in context.user:
-            del context.user_data['state']
-        return
-        
-    # Nomor sudah pernah login, lanjutkan ke proses pembayaran
-    payment_method = context.user_data.get('xut_vidio_direct_payment_method', 'qris')
-    
-    if payment_method == 'qris':
-        await process_xut_vidio_direct_qris_payment(update, context)
-    elif payment_method == 'pulsa':
-        await process_xut_vidio_direct_pulsa_payment(update, context)
-    elif payment_method == 'ewallet':
-        await process_xut_vidio_direct_ewallet_payment(update, context)
-    else:
-        # Default ke QRIS jika metode tidak dikenali
-        await process_xut_vidio_direct_qris_payment(update, context)
-
-
-async def process_xut_vidio_direct_qris_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Proses pembayaran QRIS untuk XUT Vidio direct ke nomor tujuan"""
-    # Kita bisa menggunakan pesan dari input sebelumnya atau kirim pesan baru
-    # Untuk menyederhanakan, kita asumsi ini dipanggil dari handler pesan
-    message_obj = update.message
-    
-    target_number = context.user_data.get('target_number_for_xut_vidio_direct')
-    
-    if not target_number:
-        await message_obj.reply_text("❌ Informasi nomor tujuan tidak ditemukan. Silakan mulai dari awal.")
-        return
-        
     try:
-        await message_obj.reply_text("🔄 Memproses pembayaran QRIS untuk nomor tujuan...")
-        
-        # 1. Set akun aktif ke nomor target (karena kita butuh token untuk pembayaran)
-        # Simpan akun aktif sebelumnya untuk dikembalikan nanti (opsional)
-        previous_active_user = AuthInstance.get_active_user()
-        context.user_data['previous_active_user_for_xut_vidio_direct'] = previous_active_user['number'] if previous_active_user else None
-        
-        success = AuthInstance.set_active_user(int(target_number))
-        if not success:
-            # Bersihkan context
-            keys_to_remove = ['state', 'xut_vidio_direct_payment_method', 'target_number_for_xut_vidio_direct', 'previous_active_user_for_xut_vidio_direct']
-            for key in keys_to_remove:
-                if key in context.user:
-                    del context.user_data[key]
-                    
-            error_message = (
-                f"⚠️ Tidak dapat menggunakan akun {target_number} untuk pembelian.\n"
-                f"Kemungkinan penyebab:\n"
-                f"• Token login sudah kadaluarsa.\n"
-                f"• Akun belum pernah login di bot ini.\n\n"
-                f"Silakan:\n"
-                f"1. Login ulang untuk nomor {target_number} melalui menu 'Login/Ganti akun'.\n"
-                f"2. Atau kembali ke menu utama."
-            )
-            keyboard = [[InlineKeyboardButton("🏠 Menu Utama", callback_data='main_menu')]]
-            reply_markup = InlineKeyboardMarkup(keyboard)
-            await message_obj.reply_text(error_message, reply_markup=reply_markup)
-            return # Hentikan eksekusi
-            
-        # 2. Dapatkan token yang baru saja di-set
+        # 1. Pastikan pengguna sudah login
         tokens = AuthInstance.get_active_tokens()
-        api_key = AuthInstance.api_key
-        
         if not tokens:
-            # Bersihkan context
-            keys_to_remove = ['state', 'xut_vidio_direct_payment_method', 'target_number_for_xut_vidio_direct', 'previous_active_user_for_xut_vidio_direct']
-            for key in keys_to_remove:
-                if key in context.user:
-                    del context.user_data[key]
-            await message_obj.reply_text("❌ Gagal mendapatkan token untuk pembelian.")
+            await query.message.edit_text("❌ Tidak ada akun aktif. Silakan login terlebih dahulu.")
             return
             
-        # 3. Dapatkan paket XUT Vidio nomor 11
-        packages = get_package_xut()
-        if not packages:
-            # Bersihkan context
-            keys_to_remove = ['state', 'xut_vidio_direct_payment_method', 'target_number_for_xut_vidio_direct', 'previous_active_user_for_xut_vidio_direct']
-            for key in keys_to_remove:
-                if key in context.user:
-                    del context.user_data[key]
-            await message_obj.reply_text("❌ Gagal mengambil data paket XUT.")
-            return
-            
-        # Cari paket nomor 11 (XUT Vidio)
-        target_package = next((pkg for pkg in packages if pkg.get('number') == 11), None)
-        if not target_package:
-            # Bersihkan context
-            keys_to_remove = ['state', 'xut_vidio_direct_payment_method', 'target_number_for_xut_vidio_direct', 'previous_active_user_for_xut_vidio_direct']
-            for key in keys_to_remove:
-                if key in context.user:
-                    del context.user_data[key]
-            await message_obj.reply_text("❌ Paket XUT Unlimited Turbo Vidio (nomor 11) tidak ditemukan.")
-            return
-            
-        # 4. Dapatkan detail paket lengkap untuk token_confirmation
-        package_code = target_package['code']
-        package_details = get_package(api_key, tokens, package_code)
+        await query.message.edit_text("🔄 Mengambil detail paket XUT Vidio...")
         
-        if not package_details:
-            # Bersihkan context
-            keys_to_remove = ['state', 'xut_vidio_direct_payment_method', 'target_number_for_xut_vidio_direct', 'previous_active_user_for_xut_vidio_direct']
-            for key in keys_to_remove:
-                if key in context.user:
-                    del context.user_data[key]
-            await message_obj.reply_text("❌ Gagal mengambil detail paket untuk pembelian.")
-            return
-            
-        token_confirmation = package_details["token_confirmation"]
-        package_name = target_package['name']
-        price = target_package['price']
-        
-        # 5. Proses pembayaran QRIS (mirip dengan buy_xut_with_qris tapi khusus untuk nomor tujuan)
-        # a. Dapatkan metode pembayaran
-        from purchase_api import get_payment_methods # Import di sini untuk memastikan tersedia
-        payment_methods_data = get_payment_methods(
-            api_key=api_key,
-            tokens=tokens,
-            token_confirmation=token_confirmation,
-            payment_target=package_code,
-        )
-        
-        if not payment_methods:
-            # Bersihkan context
-            keys_to_remove = ['state', 'xut_vidio_direct_payment_method', 'target_number_for_xut_vidio_direct', 'previous_active_user_for_xut_vidio_direct']
-            for key in keys_to_remove:
-                if key in context.user:
-                    del context.user_data[key]
-            await message_obj.reply_text("❌ Gagal mendapatkan metode pembayaran QRIS.")
-            return
-            
-        token_payment = payment_methods_data["token_payment"]
-        ts_to_sign = payment_methods_data["timestamp"]
-        
-        # b. Buat transaksi QRIS
-        from purchase_api import settlement_qris # Import di sini
-        transaction_id = settlement_qris(
-            api_key=api_key,
-            tokens=tokens,
-            token_payment=token_payment,
-            ts_to_sign=ts_to_sign,
-            payment_target=package_code,
-            price=price,
-            item_name=package_name
-        )
-        
-        if not transaction_id:
-            # Bersihkan context
-            keys_to_remove = ['state', 'xut_vidio_direct_payment_method', 'target_number_for_xut_vidio_direct', 'previous_active_user_for_xut_vidio_direct']
-            for key in keys_to_remove:
-                if key in context.user:
-                    del context.user_data[key]
-            await message_obj.reply_text("❌ Gagal membuat transaksi QRIS.")
-            return
-            
-        # c. Dapatkan data QRIS
-        from purchase_api import get_qris_code # Import di sini
-        qris_data = get_qris_code(api_key, tokens, transaction_id)
-        
-        if not qris:
-            # Bersihkan context
-            keys_to_remove = ['state', 'xut_vidio_direct_payment_method', 'target_number_for_xut_vidio_direct', 'previous_active_user_for_xut_vidio_direct']
-            for key in keys_to_remove:
-                if key in context.user:
-                    del context.user_data[key]
-            await message_obj.reply_text("❌ Gagal mendapatkan data QRIS.")
-            return
-            
-        # d. Buat dan kirim QR Code
-        import qrcode
-        from io import BytesIO
-        qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
-        qr.add_data(qris_data)
-        qr.make(fit=True)
-        img = qr.make_image(fill_color="black", back_color="white")
-        
-        img_buffer = BytesIO()
-        img.save(img_buffer, format='PNG')
-        img_buffer.seek(0)
-        
-        caption = (
-            f"📲 *Pembayaran QRIS untuk {target_number}*\n\n"
-            f"Silakan scan QR Code di bawah ini untuk menyelesaikan pembayaran.\n\n"
-            f"📦 *Paket:* {package_name}\n"
-            f"💰 *Harga:* Rp {price:,}\n\n"
-            f"Setelah pembayaran berhasil, paket akan otomatis masuk ke nomor {target_number}."
-        )
-        
-        await message_obj.reply_photo(photo=img_buffer, caption=caption, parse_mode='Markdown')
-        
-        # Kirim pesan konfirmasi
-        await message_obj.reply_text(
-            f"✅ QR Code pembayaran telah dikirim!\n"
-            f"Silakan scan QR Code yang dikirim di atas untuk menyelesaikan pembayaran untuk nomor {target_number}.\n\n"
-            f"Setelah pembayaran berhasil, paket akan otomatis masuk ke akun tersebut."
-        )
-        
-        # Bersihkan context
-        keys_to_remove = ['state', 'xut_vidio_direct_payment_method', 'target_number_for_xut_vidio_direct', 'previous_active_user_for_xut_vidio_direct']
-        for key in keys_to_remove:
-            if key in context.user:
-                del context.user_data[key]
-                
-    except Exception as e:
-        logger.error(f"Error processing QRIS payment for {target_number} (direct XUT Vidio): {e}", exc_info=True)
-        # Bersihkan context
-        keys_to_remove = ['state', 'xut_vidio_direct_payment_method', 'target_number_for_xut_vidio_direct', 'previous_active_user_for_xut_vidio_direct']
-        for key in keys_to_remove:
-            if key in context.user:
-                del context.user_data[key]
-        await message_obj.reply_text(
-            f"❌ Terjadi kesalahan saat memproses pembayaran QRIS untuk {target_number}.\n"
-            f"Silakan coba lagi dari awal atau hubungi administrator."
-        )
-
-
-# Fungsi untuk metode pembayaran lainnya (simulasi)
-async def process_xut_vidio_direct_pulsa_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Simulasi proses pembelian dengan Pulsa untuk XUT Vidio direct"""
-    message_obj = update.message
-    target_number = context.user_data.get('target_number_for_xut_vidio_direct')
-    
-    # Dapatkan detail paket (sama seperti QRIS)
-    try:
-        AuthInstance.set_active_user(int(target_number))
-        tokens = AuthInstance.get_active_tokens()
+        # 2. Dapatkan API key
         api_key = AuthInstance.api_key
         
+        # 3. Panggil fungsi get_package_xut() untuk mendapatkan daftar paket
         packages = get_package_xut()
-        target_package = next((pkg for pkg in packages if pkg.get('number') == 11), None)
-        if not target_package:
-            await message_obj.reply_text("❌ Paket tidak ditemukan.")
+        
+        if not packages:
+            await query.message.edit_text("❌ Gagal mengambil data paket XUT.")
             return
             
+        # 4. Cari paket dengan nomor 11
+        target_package = None
+        for pkg in packages:
+            if pkg.get('number') == 11:  # Cari paket nomor 11
+                target_package = pkg
+                break
+                
+        if not target_package:
+            await query.message.edit_text("❌ Paket XUT Unlimited Turbo Vidio (nomor 11) tidak ditemukan.")
+            return
+            
+        # 5. Ambil detail paket lengkap untuk mendapatkan token_confirmation
         package_code = target_package['code']
         package_details = get_package(api_key, tokens, package_code)
+        
         if not package_details:
-            await message_obj.reply_text("❌ Gagal mengambil detail paket.")
+            await query.message.edit_text("❌ Gagal mengambil detail paket XUT Vidio.")
             return
             
+        # 6. Ekstrak informasi yang dibutuhkan
         package_name = target_package['name']
-        price = target_package['price']
+        package_price = target_package['price']
+        token_confirmation = package_details["token_confirmation"]
         
-        # Simulasi pembelian dengan Pulsa (panggil API asli)
-        from api_request import purchase_package
-        result = purchase_package(api_key, tokens, package_code)
+        # 7. Simpan informasi paket di context.user_data dengan KEY YANG SESUAI
+        # Gunakan 'selected_package' agar bisa dibaca oleh buy_xut_with_qris
+        context.user_data['selected_package'] = {
+            'code': package_code,
+            'name': package_name,
+            'price': package_price,
+            'token_confirmation': token_confirmation,
+            # Tambahkan field lain jika diperlukan
+            'validity': package_details["package_option"]["validity"],
+            'benefits': package_details["package_option"]["benefits"],
+            'tnc': package_details["package_option"]["tnc"]
+        }
         
-        if result and result.get("status") == "SUCCESS":
-            await message_obj.reply_text(
-                f"✅ Pembelian paket {package_name} untuk nomor {target_number} dengan Pulsa berhasil diinisiasi!\n"
-                f"Silakan cek hasil pembelian di aplikasi MyXL."
-            )
-        else:
-            await message_obj.reply_text(
-                f"❌ Gagal membeli paket {package_name} untuk nomor {target_number} dengan Pulsa.\n"
-                f"Silakan coba lagi atau gunakan metode pembayaran lain."
-            )
-            
-        # Bersihkan context
-        keys_to_remove = ['state', 'xut_vidio_direct_payment_method', 'target_number_for_xut_vidio_direct', 'previous_active_user_for_xut_vidio_direct']
-        for key in keys_to_remove:
-            if key in context.user:
-                del context.user_data[key]
-        
-    except Exception as e:
-        logger.error(f"Error processing Pulsa payment for {target_number} (direct XUT Vidio): {e}")
-        keys_to_remove = ['state', 'xut_vidio_direct_payment_method', 'target_number_for_xut_vidio_direct', 'previous_active_user_for_xut_vidio_direct']
-        for key in keys_to_remove:
-            if key in context.user:
-                del context.user_data[key]
-        await message_obj.reply_text(
-            f"❌ Terjadi kesalahan saat memproses pembelian dengan Pulsa untuk {target_number}.\n"
-            f"Silakan coba lagi."
-        )
-
-
-async def process_xut_vidio_direct_ewallet_payment(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Simulasi proses pembelian dengan E-Wallet untuk XUT Vidio direct"""
-    message_obj = update.message
-    target_number = context.user_data.get('target_number_for_xut_vidio_direct')
-    
-    # Dapatkan detail paket (sama seperti QRIS)
-    try:
-        # Kita tidak perlu mengganti akun aktif untuk simulasi E-Wallet
-        packages = get_package_xut()
-        target_package = next((pkg for pkg in packages if pkg.get('number') == 11), None)
-        if not target_package:
-            await message_obj.reply_text("❌ Paket tidak ditemukan.")
-            return
-            
-        package_name = target_package['name']
-        price = target_package['price']
-        package_code = target_package['code']
-        
-        # Simulasi pembelian dengan E-Wallet
+        # 8. Tampilkan detail paket dan opsi pembayaran
         message = (
-            f"💳 *Pembelian dengan E-Wallet untuk {target_number}*\n\n"
-            f"Untuk menyelesaikan pembelian paket {package_name}:\n\n"
-            f"1. Buka aplikasi pembayaran Anda (DANA, OVO, GoPay, ShopeePay)\n"
-            f"2. Pilih menu Bayar atau Scan QR\n"
-            f"3. Gunakan kode pembayaran berikut:\n"
-            f"   `EW-{package_code}-{int(price)}`\n"
-            f"4. Konfirmasi pembayaran sebesar Rp {price:,}\n\n"
-            f"Setelah pembayaran berhasil, paket akan otomatis masuk ke nomor {target_number}."
+            f"📦 *Detail Paket XUT*\n\n"
+            f"🏷 *Nama:* {package_name}\n"
+            f"💰 *Harga:* Rp {package_price}\n\n"
+            "Pilih metode pembayaran:"
         )
         
-        keyboard = [[InlineKeyboardButton("🏠 Menu Utama", callback_data='main_menu')]]
+        keyboard = [
+            [InlineKeyboardButton("💳 Beli dengan Pulsa", callback_data='buy_xut_pulsa')],
+            [InlineKeyboardButton("💳 Beli dengan E-Wallet", callback_data='buy_xut_ewallet')],
+            [InlineKeyboardButton("📲 Beli dengan QRIS", callback_data='buy_xut_qris')], # Pastikan callback_data ini
+            [InlineKeyboardButton("🔙 Kembali", callback_data='main_menu')],
+        ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         
-        await message_obj.reply_text(message, reply_markup=reply_markup, parse_mode='Markdown')
-        
-        # Bersihkan context
-        keys_to_remove = ['state', 'xut_vidio_direct_payment_method', 'target_number_for_xut_vidio_direct', 'previous_active_user_for_xut_vidio_direct']
-        for key in keys_to_remove:
-            if key in context.user:
-                del context.user_data[key]
+        await query.message.edit_text(message, reply_markup=reply_markup, parse_mode='Markdown')
         
     except Exception as e:
-        logger.error(f"Error processing E-Wallet payment for {target_number} (direct XUT Vidio): {e}")
-        keys_to_remove = ['state', 'xut_vidio_direct_payment_method', 'target_number_for_xut_vidio_direct', 'previous_active_user_for_xut_vidio_direct']
-        for key in keys_to_remove:
-            if key in context.user:
-                del context.user_data[key]
-        await message_obj.reply_text(
-            f"❌ Terjadi kesalahan saat memproses pembelian dengan E-Wallet untuk {target_number}.\n"
-            f"Silakan coba lagi."
-        )
+        logger.error(f"Error fetching XUT Vidio package: {e}", exc_info=True)
+        await query.message.edit_text("❌ Terjadi kesalahan saat mengambil detail paket XUT Vidio.")
+
 
 # === PEMBELIAN PAKET BERDASARKAN FAMILY CODE ===
 
@@ -1467,58 +1130,6 @@ async def buy_family_with_qris(update: Update, context: ContextTypes.DEFAULT_TYP
     """Memulai proses pembelian paket family dengan QRIS"""
     await buy_xut_with_qris(update, context)  # Gunakan fungsi yang sama
 
-# === INFORMASI AKUN ===
-
-async def show_account_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Display account information"""
-    query = update.callback_query
-    await query.answer()
-    
-    tokens = AuthInstance.get_active_tokens()
-    if not tokens:
-        await query.message.edit_text("❌ Tidak ada akun aktif. Silakan login terlebih dahulu.")
-        return
-    
-    try:
-        await query.message.edit_text("🔄 Mengambil informasi akun...")
-        
-        api_key = AuthInstance.api_key
-        id_token = tokens.get("id_token")
-        access_token = tokens.get("access_token")
-        
-        # Get profile
-        profile_data = get_profile(api_key, access_token, id_token)
-        if not profile:
-            await query.message.edit_text("❌ Gagal mengambil data profil.")
-            return
-            
-        msisdn = profile_data.get("profile", {}).get("msisdn", "N/A")
-        
-        # Get balance
-        balance_data = get_balance(api_key, id_token)
-        if not balance:
-            await query.message.edit_text("❌ Gagal mengambil data saldo.")
-            return
-            
-        remaining = balance_data.get("remaining", 0)
-        expired_at = balance_data.get("expired_at", "N/A")
-        
-        message = (
-            f"👤 *Informasi Akun MyXL*\n\n"
-            f"📱 *Nomor:* {msisdn}\n"
-            f"💰 *Pulsa:* Rp {remaining:,}\n"
-            f"📅 *Masa Aktif:* {expired_at}"
-        )
-        
-        keyboard = [[InlineKeyboardButton("🔙 Kembali", callback_data='main_menu')]]
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        
-        await query.message.edit_text(message, reply_markup=reply_markup, parse_mode='Markdown')
-        
-    except Exception as e:
-        logger.error(f"Error showing account info: {e}")
-        await query.message.edit_text("❌ Terjadi kesalahan saat mengambil informasi akun.")
-
 # === HANDLER CALLBACK ===
 
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -1575,8 +1186,8 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await buy_xut_with_qris(update, context)
         
     # Beli Paket XUT Vidio Direct
-    elif data == 'buy_xut_vidio_direct_start':
-        await buy_xut_vidio_direct_start(update, context)
+    elif data == 'buy_xut_vidio_direct':
+        await buy_xut_vidio_direct(update, context)
     elif data in ['buy_xut_vidio_direct_pulsa', 'buy_xut_vidio_direct_ewallet', 'buy_xut_vidio_direct_qris']:
         await handle_xut_vidio_direct_payment_choice(update, context)
         
@@ -1645,13 +1256,10 @@ def main() -> None:
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_family_code_input), group=3)
     # Handler untuk input nomor tujuan XUT Vidio direct QRIS
     application.add_handler(MessageHandler(filters.Regex(r'^628\d{8,12}$') & ~filters.COMMAND, handle_target_number_for_xut_vidio_direct_input), group=4)
-    # Handler untuk input nomor untuk login cepat (bisa digunakan bersama dengan handler nomor telepon)
-    # application.add_handler(MessageHandler(filters.Regex(r'^628\d{8,12}$') & ~filters.COMMAND, handle_quick_login_number_input), group=5)
 
     # Jalankan bot
     logger.info("Bot is running...")
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 if __name__ == "__main__":
-
     main()
