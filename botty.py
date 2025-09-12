@@ -227,15 +227,21 @@ async def initiate_switch_account(update: Update, context: ContextTypes.DEFAULT_
 # Fungsi utama yang menangani input nomor telepon
 async def handle_phone_number_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Menangani input nomor telepon untuk login atau ganti akun"""
-    original_input = phone_number 
+    state = context.user_data.get('state')
+    if state not in ['waiting_phone_number_login', 'waiting_phone_number_switch']:
+        return # Bukan saatnya menerima nomor
+
+    phone_number = update.message.text.strip()
+    
+    # --- MODIFIKASI MULAI DI SINI ---
+    # Simpan nomor asli untuk keperluan logging/pesan error jika diperlukan
+    original_input = phone_number
 
     # Periksa dan konversi format nomor
     if phone_number.startswith("08"):
         # Konversi dari 08... ke 628...
         phone_number = "628" + phone_number[1:]
-        logger.info(f"[LOGIN] Nomor dikonversi dari {original_input} ke {phone_number}")
-        # Update nomor di pesan untuk konsistensi logika selanjutnya
-        # Kita tidak bisa mengubah update.message.text, jadi kita gunakan variabel phone_number yang sudah dikonversi
+        logger.info(f"[LOGIN/SWITCH] Nomor dikonversi dari {original_input} ke {phone_number}")
     elif phone_number.startswith("628"):
         # Format sudah benar, tidak perlu diubah
         pass
@@ -251,8 +257,8 @@ async def handle_phone_number_input(update: Update, context: ContextTypes.DEFAUL
         )
         return
 
-    # Validasi format nomor yang telah dikonversi (harus 628...)
-    # Panjang total untuk 628xx... adalah 11-15 digit
+    # Validasi format nomor yang telah (mungkin) dikonversi
+    # Setelah konversi, nomor harus dimulai dengan 628 dan memiliki panjang total 11-15 karakter
     if not phone_number.startswith("628") or not phone_number[1:].isdigit() or len(phone_number) < 11 or len(phone_number) > 15:
         await update.message.reply_text(
             f"❌ Nomor telepon tidak valid setelah konversi.\n"
@@ -261,21 +267,23 @@ async def handle_phone_number_input(update: Update, context: ContextTypes.DEFAUL
             "Silakan kirimkan nomor yang benar:"
         )
         return
-    
-    AuthInstance.load_tokens() # Muat token terbaru
+    # --- MODIFIKASI SELESAI DI SINI ---
+
+    # Muat token terbaru
+    AuthInstance.load_tokens() 
     user_exists = any(str(user['number']) == phone_number for user in AuthInstance.refresh_tokens)
-    active_user = AuthInstance.get_active_user()
-    is_active = active_user and str(active_user['number']) == phone_number
+    # active_user = AuthInstance.get_active_user() # Tidak digunakan dalam logika ini
+    # is_active = active_user and str(active_user['number']) == phone_number # Tidak digunakan dalam logika ini
 
     if state == 'waiting_phone_number_login':
         if user_exists:
             # Jika sudah ada, langsung aktifkan
             success = AuthInstance.set_active_user(int(phone_number))
             if success:
-                await update.message.reply_text(f"✅ Akun `{phone_number}` sudah ada dan berhasil diaktifkan coy!", parse_mode='Markdown')
+                await update.message.reply_text(f"✅ Akun `{phone_number}` sudah ada dan berhasil diaktifkan!", parse_mode='Markdown')
                 await asyncio.sleep(1)
                 await show_main_menu(update, context)
-                return
+                return # TAMBAHKAN return DI SINI
             else:
                  await update.message.reply_text(
                     f"❌ Gagal mengaktifkan akun `{phone_number}`. Token mungkin sudah kadaluarsa.\n"
@@ -283,25 +291,26 @@ async def handle_phone_number_input(update: Update, context: ContextTypes.DEFAUL
                     parse_mode='Markdown'
                 )
                 # Reset state dan mulai OTP flow
-            context.user_data['temp_phone'] = phone_number
-            context.user_data['state'] = 'waiting_otp'
-            await request_and_send_otp(update, phone_number)
-            return
+                context.user_data['temp_phone'] = phone_number
+                context.user_data['state'] = 'waiting_otp'
+                await request_and_send_otp(update, phone_number)
+                return # TAMBAHKAN return DI SINI
         else:
-        # Jika belum ada, minta OTP
+            # Jika belum ada, minta OTP
             context.user_data['temp_phone'] = phone_number
             context.user_data['state'] = 'waiting_otp'
             await request_and_send_otp(update, phone_number)
-            return # Ini dijalankan jika user_exists False
+            return # TAMBAHKAN return DI SINI
+
     elif state == 'waiting_phone_number_switch':
         if user_exists:
             # Jika ada, langsung aktifkan
             success = AuthInstance.set_active_user(int(phone_number))
             if success:
-                await update.message.reply_text(f"✅ Berhasil beralih ke akun coy `{phone_number}`.", parse_mode='Markdown')
+                await update.message.reply_text(f"✅ Berhasil beralih ke akun `{phone_number}`.", parse_mode='Markdown')
                 await asyncio.sleep(1)
                 await show_main_menu(update, context)
-                return
+                return # TAMBAHKAN return DI SINI
             else:
                  await update.message.reply_text(
                     f"❌ Gagal mengaktifkan akun `{phone_number}`. Token mungkin sudah kadaluarsa.\n"
@@ -309,10 +318,16 @@ async def handle_phone_number_input(update: Update, context: ContextTypes.DEFAUL
                     parse_mode='Markdown'
                 )
                  # Reset state dan mulai OTP flow
+                context.user_data['temp_phone'] = phone_number
+                context.user_data['state'] = 'waiting_otp'
+                await request_and_send_otp(update, phone_number)
+                return # TAMBAHKAN return DI SINI
+        else:
+            # Jika tidak ada, minta OTP untuk login akun baru ini
             context.user_data['temp_phone'] = phone_number
             context.user_data['state'] = 'waiting_otp'
             await request_and_send_otp(update, phone_number)
-            return
+            return # TAMBAHKAN return DI SINI
 
 # Fungsi bantu untuk meminta dan mengirim OTP
 async def request_and_send_otp(update: Update, phone_number: str) -> None:
