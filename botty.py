@@ -156,10 +156,10 @@ async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     active_user = AuthInstance.get_active_user()
     main_buttons = [
 	InlineKeyboardButton("Login & Cek Login", callback_data='switch_account_menu'),
-       #InlineKeyboardButton("Login", callback_data='login_menu'),
+        InlineKeyboardButton("Login", callback_data='login_menu'),
         InlineKeyboardButton("XLUNLI", callback_data='buy_xut_vidio_direct'), # Langsung ke Vidio
         InlineKeyboardButton("Lihat Paket Saya", callback_data='view_packages'),
-        #InlineKeyboardButton("2. Ganti Akun", callback_data='switch_account_menu'),
+        InlineKeyboardButton("2. Ganti Akun", callback_data='switch_account_menu'),
         #InlineKeyboardButton(" XLUNLI", callback_data='buy_xut_vidio_direct'), # Langsung ke Vidio
         InlineKeyboardButton("FamCode", callback_data='buy_family'),
     ]
@@ -327,7 +327,7 @@ async def handle_phone_number_input(update: Update, context: ContextTypes.DEFAUL
             context.user_data['temp_phone'] = phone_number
             context.user_data['state'] = 'waiting_otp'
             await request_and_send_otp(update, phone_number)
-            return # TAMBAHKAN return DI SINI
+            #return # TAMBAHKAN return DI SINI
 
 # Fungsi bantu untuk meminta dan mengirim OTP
 async def request_and_send_otp(update: Update, phone_number: str) -> None:
@@ -978,4 +978,5 @@ def main() -> None:
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 if __name__ == "__main__":
     main()
+
 
