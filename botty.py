@@ -129,14 +129,14 @@ async def buy_xut_vidio_direct(update: Update, context: ContextTypes.DEFAULT_TYP
         }
         # 8. Tampilkan detail paket dan opsi pembayaran
         message = (
-            f"📦 *Detail Paket XUT*\n"
+            f"📦 *Detail Paket*\n"
             f"🏷 *Nama:* {package_name}\n"
             f"💰 *Harga:* Rp {package_price}\n"
             "Pilih metode pembayaran:"
         )
         keyboard = [
-            [InlineKeyboardButton("💳 Beli dengan Pulsa", callback_data='buy_xut_pulsa')],
-            [InlineKeyboardButton("💳 Beli dengan E-Wallet", callback_data='buy_xut_ewallet')],
+            #[InlineKeyboardButton("💳 Beli dengan Pulsa", callback_data='buy_xut_pulsa')],
+            #[InlineKeyboardButton("💳 Beli dengan E-Wallet", callback_data='buy_xut_ewallet')],
             [InlineKeyboardButton("📲 Beli dengan QRIS", callback_data='buy_xut_qris')], # Pastikan callback_data ini
             [InlineKeyboardButton("🔙 Kembali", callback_data='main_menu')],
         ]
@@ -155,10 +155,11 @@ async def show_main_menu(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     # Periksa akun aktif
     active_user = AuthInstance.get_active_user()
     main_buttons = [
-        InlineKeyboardButton("Login OTP", callback_data='login_menu'),
-        InlineKeyboardButton("Cek Login", callback_data='switch_account_menu'),
+	InlineKeyboardButton("Login & Cek Login", callback_data='switch_account_menu'),
+       #InlineKeyboardButton("Login", callback_data='login_menu'),
         InlineKeyboardButton("XLUNLI", callback_data='buy_xut_vidio_direct'), # Langsung ke Vidio
         InlineKeyboardButton("Lihat Paket Saya", callback_data='view_packages'),
+        #InlineKeyboardButton("2. Ganti Akun", callback_data='switch_account_menu'),
         #InlineKeyboardButton(" XLUNLI", callback_data='buy_xut_vidio_direct'), # Langsung ke Vidio
         InlineKeyboardButton("FamCode", callback_data='buy_family'),
     ]
@@ -209,7 +210,7 @@ async def initiate_switch_account(update: Update, context: ContextTypes.DEFAULT_
     if query:
         await query.answer()
     message = (
-        "🔄 *Ganti Akun*\n"
+        "🔄 *Cek Login*\n"
         "Silakan kirimkan nomor telepon yang ingin diaktifkan.\n"
         "Format: `628XXXXXXXXXX` (awali dengan 62)\n"
     )
@@ -226,19 +227,41 @@ async def initiate_switch_account(update: Update, context: ContextTypes.DEFAULT_
 # Fungsi utama yang menangani input nomor telepon
 async def handle_phone_number_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Menangani input nomor telepon untuk login atau ganti akun"""
-    state = context.user_data.get('state')
-    if state not in ['waiting_phone_number_login', 'waiting_phone_number_switch']:
-        return # Bukan saatnya menerima nomor
+    original_input = phone_number 
 
-    phone_number = update.message.text.strip()
-    # Validasi format nomor
-    if not phone_number.startswith("628") or not phone_number[1:].isdigit() or len(phone_number) < 10 or len(phone_number) > 15:
+    # Periksa dan konversi format nomor
+    if phone_number.startswith("08"):
+        # Konversi dari 08... ke 628...
+        phone_number = "628" + phone_number[1:]
+        logger.info(f"[LOGIN] Nomor dikonversi dari {original_input} ke {phone_number}")
+        # Update nomor di pesan untuk konsistensi logika selanjutnya
+        # Kita tidak bisa mengubah update.message.text, jadi kita gunakan variabel phone_number yang sudah dikonversi
+    elif phone_number.startswith("628"):
+        # Format sudah benar, tidak perlu diubah
+        pass
+    else:
+        # Format tidak dikenali
         await update.message.reply_text(
-            "❌ Nomor telepon tidak valid.\n"
-            "Awali 62.\n"
+            f"❌ Nomor telepon tidak valid.\n"
+            "Format yang diterima:\n"
+            "  • `628XXXXXXXXXX` (format internasional)\n"
+            "  • `08XXXXXXXXX` (format lokal, akan dikonversi otomatis)\n"
+            f"Nomor yang Anda kirim: `{original_input}`\n"
+            "Silakan kirimkan nomor yang benar:"
         )
         return
 
+    # Validasi format nomor yang telah dikonversi (harus 628...)
+    # Panjang total untuk 628xx... adalah 11-15 digit
+    if not phone_number.startswith("628") or not phone_number[1:].isdigit() or len(phone_number) < 11 or len(phone_number) > 15:
+        await update.message.reply_text(
+            f"❌ Nomor telepon tidak valid setelah konversi.\n"
+            f"Nomor setelah konversi: `{phone_number}`\n"
+            "Pastikan nomor memiliki 9-12 digit setelah '08' atau 10-13 digit setelah '628'.\n"
+            "Silakan kirimkan nomor yang benar:"
+        )
+        return
+    
     AuthInstance.load_tokens() # Muat token terbaru
     user_exists = any(str(user['number']) == phone_number for user in AuthInstance.refresh_tokens)
     active_user = AuthInstance.get_active_user()
@@ -290,11 +313,6 @@ async def handle_phone_number_input(update: Update, context: ContextTypes.DEFAUL
             context.user_data['state'] = 'waiting_otp'
             await request_and_send_otp(update, phone_number)
             return
-        else:
-        # Jika belum ada, minta OTP
-            context.user_data['temp_phone'] = phone_number
-            context.user_data['state'] = 'waiting_otp'
-            await request_and_send_otp(update, phone_number)
 
 # Fungsi bantu untuk meminta dan mengirim OTP
 async def request_and_send_otp(update: Update, phone_number: str) -> None:
@@ -493,8 +511,8 @@ async def show_xut_package_details(update: Update, context: ContextTypes.DEFAULT
             f"📝 *Syarat & Ketentuan:*\n{tnc[:300]}..." # Batasi panjang T&C
         )
         keyboard = [
-            [InlineKeyboardButton("💳 Beli dengan Pulsa", callback_data='buy_xut_pulsa')],
-            [InlineKeyboardButton("💳 Beli dengan E-Wallet", callback_data='buy_xut_ewallet')],
+            #[InlineKeyboardButton("💳 Beli dengan Pulsa", callback_data='buy_xut_pulsa')],
+            #[InlineKeyboardButton("💳 Beli dengan E-Wallet", callback_data='buy_xut_ewallet')],
             [InlineKeyboardButton("📲 Beli dengan QRIS", callback_data='buy_xut_qris')],
             [InlineKeyboardButton("🔙 Kembali", callback_data='buy_xut')],
         ]
@@ -663,84 +681,15 @@ async def request_family_code(update: Update, context: ContextTypes.DEFAULT_TYPE
     reply_markup = InlineKeyboardMarkup(keyboard)
     await query.message.edit_text(message, reply_markup=reply_markup)
 async def handle_family_code_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Menangani input Family Code ATAU input amount manual untuk QRIS Family"""
-    
-    state = context.user_data.get('state')
-    
-    # --- PENANGANAN INPUT AMOUNT MANUAL UNTUK FAMILY QRIS ---
-    if state == 'waiting_family_qris_amount':
-        # 1. Ambil input jumlah dari pengguna
-        amount_text = update.message.text.strip()
-        
-        # 2. Validasi format jumlah (harus angka)
-        if not amount_text.isdigit():
-            await update.message.reply_text(
-                "❌ Jumlah tidak valid. Harap masukkan angka saja (tanpa titik/koma).\n"
-                "Contoh: `500`, `1000`, `50000`\n"
-                "Masukkan jumlah:"
-            )
-            return # Tunggu input ulang
-        
-        # 3. Konversi ke integer
-        try:
-            confirmed_amount = int(amount_text)
-            if confirmed_amount <= 0:
-                raise ValueError("Amount must be positive")
-        except ValueError:
-            await update.message.reply_text(
-                "❌ Jumlah tidak valid. Harus berupa angka positif.\n"
-                "Contoh: `500`, `1000`, `50000`\n"
-                "Masukkan jumlah:"
-            )
-            return # Tunggu input ulang
-            
-        # 4. Ambil data paket sementara yang disimpan sebelumnya
-        tmp_data = context.user_data.get('tmp_family_qris_data')
-        if not tmp_data:
-             await update.message.reply_text("❌ Terjadi kesalahan. Data paket tidak ditemukan. Silakan ulangi proses pembelian.")
-             context.user_data.pop('state', None)
-             return
-        
-        # 5. Ambil data yang diperlukan
-        tokens = AuthInstance.get_active_tokens()
-        if not tokens:
-            await update.message.reply_text("❌ Anda belum login. Silakan login terlebih dahulu.")
-            context.user_data.pop('state', None)
-            return
-        api_key = AuthInstance.api_key
-        
-        package_code = tmp_data['package_code']
-        package_name = tmp_data['package_name']
-        token_confirmation = tmp_data['token_confirmation']
-        
-        # 6. Panggil fungsi internal untuk memproses pembayaran dengan amount yang dikonfirmasi
-        # Karena ini dari MessageHandler, kita gunakan update.message sebagai 'query' untuk _process_family_qris_payment
-        await _process_family_qris_payment(
-            update.message, context,
-            api_key, tokens,
-            package_code, package_name, token_confirmation, confirmed_amount
-        )
-        
-        # State dan data sementara sudah dihapus di dalam _process_family_qris_payment
-        return # Selesai
-        
-    # --- PENANGANAN INPUT FAMILY CODE (ALUR NORMAL) ---
-    # Ini adalah bagian asli handle_family_code_input
-    if state != 'waiting_family_code':
+    """Menangani input Family Code"""
+    if context.user_data.get('state') != 'waiting_family_code':
         return # Bukan saatnya menerima Family Code
-    
     family_code = update.message.text.strip()
     is_enterprise = context.user_data.get('enterprise', False)
-    
     # Simpan family code dan tampilkan paket
     context.user_data['selected_family_code'] = family_code
     await update.message.reply_text("🔄 Mengambil daftar paket...")
     await show_family_packages(update, context, family_code, is_enterprise)
-    
-    # Hapus state setelah digunakan
-    context.user_data.pop('state', None)
-
-# --- AKHIR FUNGSI-FUNGSI BARU/MODIFIKASI ---
 async def show_family_packages(update: Update, context: ContextTypes.DEFAULT_TYPE, family_code: str, is_enterprise: bool) -> None:
     """Display packages for a specific family code"""
     try:
@@ -876,242 +825,9 @@ async def buy_family_with_pulsa(update: Update, context: ContextTypes.DEFAULT_TY
 async def buy_family_with_ewallet(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Memulai proses pembelian paket family dengan E-Wallet (simulasi)"""
     await buy_xut_with_ewallet(update, context)  # Gunakan fungsi yang sama
-
 async def buy_family_with_qris(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """
-    Memulai proses pembelian paket family dengan QRIS.
-    Fungsi ini dibuat khusus untuk Family Code karena alurnya bisa berbeda dari XUT,
-    terutama terkait konfirmasi harga/amount seperti yang terjadi di Termux.
-    """
-    query = update.callback_query
-    await query.answer()
-
-    # 1. Ambil informasi paket yang dipilih sebelumnya dan disimpan di context.user_data
-    package_info = context.user_data.get('selected_package')
-    
-    # 2. Validasi: Apakah informasi paket ada?
-    if not package_info:
-        await query.message.edit_text("❌ Informasi paket tidak ditemukan. Silakan pilih paket kembali.")
-        return
-
-    # 3. Validasi: Apakah pengguna sudah login?
-    tokens = AuthInstance.get_active_tokens()
-    if not tokens:
-        await query.message.edit_text("❌ Anda belum login. Silakan login terlebih dahulu.")
-        return
-
-    # 4. Ambil API key yang diperlukan untuk memanggil API MyXL
-    api_key = AuthInstance.api_key
-
-    # 5. Ekstrak data paket dasar
-    package_code = package_info['code']
-    package_name = package_info['name']
-    # --- PERBEDAAN UTAMA ---
-    # Ambil harga dari paket. Untuk Family Code, ini bisa 0 atau tidak sesuai.
-    package_price_from_info = package_info['price'] 
-    token_confirmation = package_info['token_confirmation']
-
-    # --- LOGIKA PENENTUAN HARGA ---
-    # Cek apakah harga dari info paket adalah 0 atau tidak valid.
-    # Anda bisa menyesuaikan kondisi ini (misalnya < 1000) sesuai kebutuhan.
-# ... (pengecekan harga 0)
-    if package_price_from_info <= 0:
-        logger.info(f"[FAMILY QRIS] Harga paket terdeteksi 0 ({package_price_from_info}). Meminta konfirmasi amount.")
-    
-        context.user_data['state'] = 'waiting_family_qris_amount'
-        context.user_data['tmp_family_qris_data'] = {
-            'package_code': package_code,
-            'package_name': package_name,
-            'token_confirmation': token_confirmation
-        }
-    # PERBAIKAN: Simpan referensi ke pesan utama (pesan yang diklik untuk QRIS)
-    # Ini memungkinkan kita untuk mengedit pesan yang benar nanti
-        context.user_data['tmp_family_qris_main_message'] = query.message
-    
-        await query.message.edit_text(
-            f"⚠️ *Konfirmasi Harga untuk {package_name}*\n"
-            "Harga paket terdeteksi sebagai Rp 0. "
-            "Silakan masukkan jumlah pembayaran yang diinginkan (dalam Rupiah, tanpa titik/koma).\n"
-            "Contoh: `500`, `1000`, `50000`\n"
-            "Masukkan jumlah:",
-            parse_mode='Markdown'
-        )
-        return
-    else:
-        # 6b. Jika harga tidak 0, gunakan harga tersebut dan lanjutkan ke pembayaran
-        confirmed_price = package_price_from_info
-        logger.info(f"[FAMILY QRIS] Menggunakan harga paket: Rp {confirmed_price}")
-        # Langsung panggil fungsi internal untuk membuat QRIS
-        await _process_family_qris_payment(
-            query, context, 
-            api_key, tokens,
-            package_code, package_name, token_confirmation, confirmed_price
-        )
-
-
-# --- FUNGSI PEMBANTU BARU ---
-# Tambahkan fungsi ini di bagian akhir file, sebelum # === INFORMASI AKUN ===
-async def _process_family_qris_payment(
-    query, context: ContextTypes.DEFAULT_TYPE,
-    api_key: str, tokens: dict,
-    package_code: str, package_name: str, token_confirmation: str, confirmed_price: int
-):
-    """
-    Fungsi internal untuk memproses pembayaran QRIS setelah harga dikonfirmasi.
-    Memisahkan logika pembayaran agar bisa digunakan baik dari harga otomatis maupun manual.
-    """
-    # --- PENANGANAN PERBEDAAN ANTARA CallbackQuery dan Message ---
-    if hasattr(query, 'answer'):
-        await query.answer()
-
-    # --- PENANGANAN PESAN YANG AKAN DIEDIT ---
-    # Prioritaskan pesan utama yang disimpan saat meminta amount manual
-    # Ini mencegah error "Message can't be edited" pada pesan input teks
-    main_message = context.user_data.get('tmp_family_qris_main_message')
-    if main_message:
-        # Jika ada pesan utama, gunakan itu untuk pengeditan
-        edit_message_func = main_message.edit_text
-        logger.info("[FAMILY QRIS] Menggunakan pesan utama untuk pengeditan.")
-    else:
-        # Fallback: Gunakan logika lama
-        logger.info("[FAMILY QRIS] Tidak ada pesan utama, menggunakan query untuk pengeditan.")
-        if hasattr(query, 'message') and query.message:
-            edit_message_func = query.message.edit_text
-        elif hasattr(query, 'edit_text'):
-            logger.info("[FAMILY QRIS] Fallback ke reply karena query adalah Message.")
-            #edit_message_func = query.edit_text
-            async def safe_edit_func(text, parse_mode=None):
-                await query.reply_text(text, parse_mode=parse_mode)
-            edit_message_func = safe_edit_func
-        else:
-            logger.error("[FAMILY QRIS] Tidak dapat menentukan fungsi edit_text.")
-            # Kirim pesan baru jika tidak bisa mengedit
-            try:
-                await query.reply_text("❌ Terjadi kesalahan internal saat memproses pembayaran.")
-            except:
-                pass
-            return
-
-    # Hapus referensi pesan utama dari context setelah digunakan
-    context.user_data.pop('tmp_family_qris_main_message', None)
-    # --- AKHIR PENANGANAN PESAN ---
-
-    # 7. Kirim pesan ke pengguna bahwa proses pembayaran QRIS sedang dimulai
-    await edit_message_func("🔄 Memproses pembayaran QRIS untuk paket Family...")
-    # ... (sisa fungsi yang sudah ada, pastikan menggunakan edit_message_func)
-    try:
-        # --- LANGKAH 1: Dapatkan metode pembayaran dari API ---
-        logger.info("[FAMILY QRIS] Fetching payment methods...")
-        # Pastikan fungsi get_payment_methods diimpor dari purchase_api
-        # from purchase_api import get_payment_methods
-        payment_methods_data = get_payment_methods(
-            api_key=api_key,
-            tokens=tokens,
-            token_confirmation=token_confirmation,
-            payment_target=package_code,
-        )
-        
-        # 8. Validasi: Apakah data metode pembayaran berhasil didapat?
-        if not payment_methods_data:
-            await edit_message_func("❌ Gagal mendapatkan metode pembayaran QRIS untuk paket Family.")
-            return
-
-        # 9. Ekstrak token dan timestamp dari data metode pembayaran
-        token_payment = payment_methods_data["token_payment"]
-        ts_to_sign = payment_methods_data["timestamp"]
-
-        # --- LANGKAH 2: Buat transaksi QRIS ---
-        logger.info("[FAMILY QRIS] Creating QRIS settlement...")
-        # --- PERBEDAAN PENTING ---
-        # Gunakan `confirmed_price` (bukan `package_info['price']` yang mungkin 0)
-        # sebagai parameter `price` untuk `settlement_qris`.
-        # Pastikan fungsi settlement_qris diimpor dari purchase_api
-        # from purchase_api import settlement_qris
-        transaction_id = settlement_qris(
-            api_key=api_key,
-            tokens=tokens,
-            token_payment=token_payment,
-            ts_to_sign=ts_to_sign,
-            payment_target=package_code,
-            price=confirmed_price,       # <-- INI YANG DIPERBAIKI
-            item_name=package_name
-        )
-        
-        # 10. Validasi: Apakah transaksi QRIS berhasil dibuat?
-        if not transaction_id:
-            await edit_message_func(
-                "❌ Gagal membuat transaksi QRIS untuk paket Family.\n"
-                "Ini bisa disebabkan oleh:\n"
-                "- Data paket (harga, nama) tidak sesuai ekspektasi API.\n"
-                "- Token konfirmasi yang kadaluarsa.\n"
-                "- Perbedaan alur API untuk pembayaran Family Code.\n"
-                "- Jumlah pembayaran yang dimasukkan tidak sesuai atau tidak didukung.\n"
-                "Silakan coba metode pembayaran lain atau hubungi admin."
-            )
-            return
-
-        # --- LANGKAH 3: Dapatkan data QRIS (kode QR) dari API ---
-        logger.info("[FAMILY QRIS] Fetching QRIS code...")
-        # Pastikan fungsi get_qris_code diimpor dari purchase_api
-        # from purchase_api import get_qris_code
-        qris_data = get_qris_code(api_key, tokens, transaction_id)
-        
-        # 11. Validasi: Apakah data QRIS berhasil didapat?
-        if not qris_data:
-            await edit_message_func("❌ Gagal mendapatkan data QRIS untuk paket Family.")
-            return
-
-        # --- LANGKAH 4: Buat dan kirim QR Code sebagai gambar ---
-        logger.info("[FAMILY QRIS] Generating QR Code image...")
-        # Pastikan qrcode diimpor
-        # import qrcode
-        qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
-        qr.add_data(qris_data)
-        qr.make(fit=True)
-        img = qr.make_image(fill_color="black", back_color="white")
-
-        # Simpan gambar ke buffer
-        from io import BytesIO # Pastikan diimpor
-        img_buffer = BytesIO()
-        img.save(img_buffer, format='PNG')
-        img_buffer.seek(0)
-
-        # Kirim QR Code sebagai foto
-        caption = (
-            f"📲 *Pembayaran QRIS (Family Code)*\n"
-            f"Silakan scan QR Code di bawah ini untuk menyelesaikan pembayaran.\n"
-            f"📦 *Paket:* {package_name}\n"
-            f"💰 *Harga:* Rp {confirmed_price:,}\n" # Gunakan harga yang dikonfirmasi
-            f"Setelah pembayaran berhasil, paket akan otomatis masuk ke akun Anda."
-        )
-        # Kirim foto. Kita perlu memastikan objek yang benar untuk reply_photo
-        if hasattr(query, 'message') and query.message:
-             await query.message.reply_photo(photo=img_buffer, caption=caption, parse_mode='Markdown')
-        else:
-             await query.reply_photo(photo=img_buffer, caption=caption, parse_mode='Markdown')
-
-        # Edit pesan sebelumnya untuk memberi tahu bahwa QR Code sudah dikirim
-        await edit_message_func(
-            "✅ QR Code pembayaran untuk paket Family telah dikirim!\n"
-            "Silakan scan QR Code yang dikirim di atas untuk menyelesaikan pembayaran.\n"
-            "Setelah pembayaran berhasil, paket akan otomatis masuk ke akun Anda."
-        )
-
-        # Reset state pembelian dan data sementara
-    
-        context.user_data.pop('selected_package', None)
-        context.user_data.pop('tmp_family_qris_data', None)
-        context.user_data.pop('tmp_family_qris_main_message', None) # <-- INI BENAR
-        context.user_data.pop('state', None) # Hapus state setelah selesai
-
-    except Exception as e:
-        # Tangkap dan log error yang terjadi selama proses
-        import traceback # Untuk info error yang lebih lengkap
-        logger.error(f"[FAMILY QRIS] Error processing payment: {e}\n{traceback.format_exc()}")
-        await edit_message_func(
-            "❌ Terjadi kesalahan saat memproses pembayaran QRIS untuk paket Family.\n"
-            "Silakan coba lagi atau hubungi administrator jika masalah berlanjut."
-        )
+    """Memulai proses pembelian paket family dengan QRIS"""
+    await buy_xut_with_qris(update, context)  # Gunakan fungsi yang sama
 # === INFORMASI AKUN ===
 async def show_account_info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Display account information"""
@@ -1246,6 +962,4 @@ def main() -> None:
     logger.info("Bot is running...")
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 if __name__ == "__main__":
-
     main()
-
