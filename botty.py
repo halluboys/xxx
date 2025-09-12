@@ -290,6 +290,11 @@ async def handle_phone_number_input(update: Update, context: ContextTypes.DEFAUL
             context.user_data['state'] = 'waiting_otp'
             await request_and_send_otp(update, phone_number)
             return
+        else:
+        # Jika belum ada, minta OTP
+            context.user_data['temp_phone'] = phone_number
+            context.user_data['state'] = 'waiting_otp'
+            await request_and_send_otp(update, phone_number)
 
 # Fungsi bantu untuk meminta dan mengirim OTP
 async def request_and_send_otp(update: Update, phone_number: str) -> None:
@@ -909,21 +914,20 @@ async def buy_family_with_qris(update: Update, context: ContextTypes.DEFAULT_TYP
     # --- LOGIKA PENENTUAN HARGA ---
     # Cek apakah harga dari info paket adalah 0 atau tidak valid.
     # Anda bisa menyesuaikan kondisi ini (misalnya < 1000) sesuai kebutuhan.
+# ... (pengecekan harga 0)
     if package_price_from_info <= 0:
-        # 6a. Jika harga 0, masuki mode konfirmasi amount manual
         logger.info(f"[FAMILY QRIS] Harga paket terdeteksi 0 ({package_price_from_info}). Meminta konfirmasi amount.")
-        
-        # Simpan state bahwa bot sedang menunggu input amount manual
+    
         context.user_data['state'] = 'waiting_family_qris_amount'
-        # Simpan data paket sementara untuk digunakan setelah amount dimasukkan
-        # Kita tidak bisa menimpa 'selected_package' karena masih dibutuhkan.
         context.user_data['tmp_family_qris_data'] = {
             'package_code': package_code,
             'package_name': package_name,
             'token_confirmation': token_confirmation
         }
-        
-        # Kirim pesan meminta amount ke pengguna
+    # PERBAIKAN: Simpan referensi ke pesan utama (pesan yang diklik untuk QRIS)
+    # Ini memungkinkan kita untuk mengedit pesan yang benar nanti
+        context.user_data['tmp_family_qris_main_message'] = query.message
+    
         await query.message.edit_text(
             f"⚠️ *Konfirmasi Harga untuk {package_name}*\n"
             "Harga paket terdeteksi sebagai Rp 0. "
@@ -932,7 +936,6 @@ async def buy_family_with_qris(update: Update, context: ContextTypes.DEFAULT_TYP
             "Masukkan jumlah:",
             parse_mode='Markdown'
         )
-        # Fungsi berhenti di sini. Nanti akan dilanjutkan oleh handler pesan teks.
         return
     else:
         # 6b. Jika harga tidak 0, gunakan harga tersebut dan lanjutkan ke pembayaran
@@ -958,22 +961,40 @@ async def _process_family_qris_payment(
     Memisahkan logika pembayaran agar bisa digunakan baik dari harga otomatis maupun manual.
     """
     # --- PENANGANAN PERBEDAAN ANTARA CallbackQuery dan Message ---
-    # Jika query adalah CallbackQuery, jawab callback-nya.
-    # Jika query adalah Message (dari input amount), tidak ada callback untuk dijawab.
     if hasattr(query, 'answer'):
         await query.answer()
-    # --- AKHIR PENANGANAN ---
+
+    # --- PENANGANAN PESAN YANG AKAN DIEDIT ---
+    # Prioritaskan pesan utama yang disimpan saat meminta amount manual
+    # Ini mencegah error "Message can't be edited" pada pesan input teks
+    main_message = context.user_data.get('tmp_family_qris_main_message')
+    if main_message:
+        # Jika ada pesan utama, gunakan itu untuk pengeditan
+        edit_message_func = main_message.edit_text
+        logger.info("[FAMILY QRIS] Menggunakan pesan utama untuk pengeditan.")
+    else:
+        # Fallback: Gunakan logika lama
+        logger.info("[FAMILY QRIS] Tidak ada pesan utama, menggunakan query untuk pengeditan.")
+        if hasattr(query, 'message') and query.message:
+            edit_message_func = query.message.edit_text
+        elif hasattr(query, 'edit_text'):
+            edit_message_func = query.edit_text
+        else:
+            logger.error("[FAMILY QRIS] Tidak dapat menentukan fungsi edit_text.")
+            # Kirim pesan baru jika tidak bisa mengedit
+            try:
+                await query.reply_text("❌ Terjadi kesalahan internal saat memproses pembayaran.")
+            except:
+                pass
+            return
+
+    # Hapus referensi pesan utama dari context setelah digunakan
+    context.user_data.pop('tmp_family_qris_main_message', None)
+    # --- AKHIR PENANGANAN PESAN ---
 
     # 7. Kirim pesan ke pengguna bahwa proses pembayaran QRIS sedang dimulai
-    # Periksa apakah query.message ada (karena bisa dari callback atau message handler)
-    if hasattr(query, 'message') and query.message:
-        edit_message_func = query.message.edit_text
-    else:
-        # Jika dipanggil dari MessageHandler, update.message adalah objek pesan
-        edit_message_func = query.edit_text 
-
     await edit_message_func("🔄 Memproses pembayaran QRIS untuk paket Family...")
-
+    # ... (sisa fungsi yang sudah ada, pastikan menggunakan edit_message_func)
     try:
         # --- LANGKAH 1: Dapatkan metode pembayaran dari API ---
         logger.info("[FAMILY QRIS] Fetching payment methods...")
@@ -1219,4 +1240,5 @@ def main() -> None:
     logger.info("Bot is running...")
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 if __name__ == "__main__":
+
     main()
