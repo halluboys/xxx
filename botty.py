@@ -978,7 +978,11 @@ async def _process_family_qris_payment(
         if hasattr(query, 'message') and query.message:
             edit_message_func = query.message.edit_text
         elif hasattr(query, 'edit_text'):
-            edit_message_func = query.edit_text
+            logger.info("[FAMILY QRIS] Fallback ke reply karena query adalah Message.")
+            #edit_message_func = query.edit_text
+            async def safe_edit_func(text, parse_mode=None):
+                await query.reply_text(text, parse_mode=parse_mode)
+            edit_message_func = safe_edit_func
         else:
             logger.error("[FAMILY QRIS] Tidak dapat menentukan fungsi edit_text.")
             # Kirim pesan baru jika tidak bisa mengedit
@@ -1094,8 +1098,10 @@ async def _process_family_qris_payment(
         )
 
         # Reset state pembelian dan data sementara
+    
         context.user_data.pop('selected_package', None)
         context.user_data.pop('tmp_family_qris_data', None)
+        context.user_data.pop('tmp_family_qris_main_message', None) # <-- INI BENAR
         context.user_data.pop('state', None) # Hapus state setelah selesai
 
     except Exception as e:
@@ -1242,3 +1248,4 @@ def main() -> None:
 if __name__ == "__main__":
 
     main()
+
