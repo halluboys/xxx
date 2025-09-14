@@ -966,237 +966,72 @@ async def menu_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     """Handler untuk perintah /menu"""
     await show_main_menu(update, context)
     
-# === PEMBELIAN PAKET ANIV SECARA LANGSUNG ===
-
 async def buy_aniv_package_direct(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """
-    Membeli paket "BONUS #TraktiranXL 28th Anniversary" secara langsung.
-    - Family Code: 6fda76ee-e789-4897-89fb-9114da47b805
-    - Package Number: 7 (berdasarkan analisis Anda)
-    - Price: 0 (dari API), Amount: 500 (dikonfirmasi manual untuk QRIS)
-    """
     query = update.callback_query
     await query.answer()
-
-    # 1. Pastikan pengguna sudah login
-    tokens = AuthInstance.get_active_tokens()
-    if not tokens:
-        await query.message.edit_text("❌ Tidak ada akun aktif. Silakan login terlebih dahulu.")
-        return
-
-    await query.message.edit_text("🔄 Memproses pembelian paket Aniv...")
-
     try:
-        # --- DATA PAKET ANIV ---
-        FAMILY_CODE_ANIV = "6fda76ee-e789-4897-89fb-9114da47b805"
-        PACKAGE_NUMBER_ANIV = 7
-        PACKAGE_NAME_ANIV = "BONUS #TraktiranXL 28th Anniversary"
-        PACKAGE_CODE_ANIV = "" # Akan diambil dari daftar paket
-        TOKEN_CONFIRMATION_ANIV = "" # Akan diambil dari detail paket
-        AMOUNT_ANIV = 500 # Harga tetap yang dikonfirmasi
-        # --- AKHIR DATA ---
-
-        # 2. Dapatkan daftar paket untuk Family Code Aniv
+        # 1. Pastikan pengguna sudah login
+        tokens = AuthInstance.get_active_tokens()
+        if not tokens:
+            await query.message.edit_text("❌ Tidak ada akun aktif. Silakan login terlebih dahulu.")
+            return
+        await query.message.edit_text("🔄 Mengambil detail paket XUT Vidio...")
+        # 2. Dapatkan API key
         api_key = AuthInstance.api_key
-        # Fungsi get_family berasal dari api_request.py
-        family_data = get_family(api_key, tokens, FAMILY_CODE_ANIV, is_enterprise=False)
-       
-        if not family_data:
-             await query.message.edit_text("❌ Gagal mengambil data paket Aniv.")
-             return
-
-        package_variants = family_data.get("package_variants", [])
-        if not package_variants:
-             await query.message.edit_text("📭 Tidak ada paket tersedia untuk Family Code Aniv.")
-             return
-
-        # 3. Temukan paket dengan nomor 7
-        # Logika ini meniru cara kerja show_family_packages dan show_family_package_details
-        all_packages_list = []
-        option_number = 1
-        for variant in package_variants:
-            # variant_name = variant["name"] # Tidak digunakan untuk pencarian
-            for option in variant["package_options"]:
-                # option_name = option["name"] # Tidak digunakan untuk pencarian
-                # price = option["price"] # Tidak digunakan untuk pencarian
-                code = option["package_option_code"]
-                all_packages_list.append({
-                    "number": option_number,
-                    "code": code
-                    # name, price bisa ditambahkan jika perlu untuk info
-                })
-                option_number += 1
-
-        target_package_info = next((p for p in all_packages_list if p["number"] == PACKAGE_NUMBER_ANIV), None)
-        
-        if not target_package_info:
-            await query.message.edit_text(
-                f"❌ Paket nomor {PACKAGE_NUMBER_ANIV} ({PACKAGE_NAME_ANIV}) tidak ditemukan "
-                f"pada Family Code `{FAMILY_CODE_ANIV}`."
-            )
+        # 3. Panggil fungsi get_package_xut() untuk mendapatkan daftar paket
+        packages ="6fda76ee-e789-4897-89fb-9114da47b805"
+        if not packages:
+            await query.message.edit_text("❌ Gagal mengambil data paket XUT.")
             return
-
-        PACKAGE_CODE_ANIV = target_package_info['code']
-
-        # 4. Ambil detail paket untuk mendapatkan token_confirmation
-        # Fungsi get_package berasal dari api_request.py
-        package_details = get_package(api_key, tokens, PACKAGE_CODE_ANIV)
-        
+        # 4. Cari paket dengan nomor 11
+        target_package = None
+        for pkg in packages:
+            if pkg.get('number') == 7:  # Cari paket nomor 7
+                target_package = pkg
+                break
+        if not target_package:
+            await query.message.edit_text("❌ Paket XUT Unlimited Turbo Vidio (nomor 11) tidak ditemukan.")
+            return
+        # 5. Ambil detail paket lengkap untuk mendapatkan token_confirmation
+        package_code = target_package['code']
+        package_details = get_package(api_key, tokens, package_code)
         if not package_details:
-             await query.message.edit_text("❌ Gagal mengambil detail paket Aniv.")
-             return
-
-        TOKEN_CONFIRMATION_ANIV = package_details.get("token_confirmation", "")
-
-        if not TOKEN_CONFIRMATION_ANIV:
-             await query.message.edit_text("❌ Gagal mendapatkan token konfirmasi untuk paket Aniv.")
-             return
-
-        logger.info(f"[ANIV DIRECT] Paket ditemukan: {PACKAGE_NAME_ANIV} ({PACKAGE_CODE_ANIV})")
-
-        # 5. Siapkan data paket untuk pembayaran (mirip dengan context.user_data['selected_package'])
-        # Simpan informasi paket sementara untuk pembayaran
-        context.user_data['tmp_direct_aniv_data'] = {
-            'package_code': PACKAGE_CODE_ANIV,
-            'package_name': PACKAGE_NAME_ANIV,
-            'token_confirmation': TOKEN_CONFIRMATION_ANIV,
-            'confirmed_price': AMOUNT_ANIV # Gunakan amount tetap
+            await query.message.edit_text("❌ Gagal mengambil detail paket XUT Vidio.")
+            return
+        # 6. Ekstrak informasi yang dibutuhkan
+        package_name = target_package['name']
+        package_price = target_package['price']
+        token_confirmation = package_details["token_confirmation"]
+        # 7. Simpan informasi paket di context.user_data dengan KEY YANG SESUAI
+        # Gunakan 'selected_package' agar bisa dibaca oleh buy_xut_with_qris
+        context.user_data['selected_package'] = {
+            'code': package_code,
+            'name': package_name,
+            'price': package_price,
+            'token_confirmation': token_confirmation,
+            # Tambahkan field lain jika diperlukan
+            'validity': package_details["package_option"]["validity"],
+            'benefits': package_details["package_option"]["benefits"],
+            'tnc': package_details["package_option"]["tnc"]
         }
-        
-        # 6. Langsung panggil fungsi pembayaran QRIS internal dengan amount yang sudah ditentukan
-        # Kita buat fungsi internal kecil untuk ini
-        await _process_direct_aniv_qris_payment(query.message, context, api_key, tokens)
-
+        # 8. Tampilkan detail paket dan opsi pembayaran
+        message = (
+            f"📦 *Detail Paket*\n"
+            f"🏷 *Nama:* {package_name}\n"
+            f"💰 *Harga:* Rp {package_price}\n"
+            "Pilih metode pembayaran:"
+        )
+        keyboard = [
+            #[InlineKeyboardButton("💳 Beli dengan Pulsa", callback_data='buy_xut_pulsa')],
+            #[InlineKeyboardButton("💳 Beli dengan E-Wallet", callback_data='buy_xut_ewallet')],
+            [InlineKeyboardButton("📲 Beli dengan QRIS", callback_data='buy_xut_qris')], # Pastikan callback_data ini
+            [InlineKeyboardButton("🔙 Kembali", callback_data='main_menu')],
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await query.message.edit_text(message, reply_markup=reply_markup, parse_mode='Markdown')
     except Exception as e:
-        logger.error(f"[ANIV DIRECT] Error memulai pembelian: {e}", exc_info=True)
-        await query.message.edit_text(
-            "❌ Terjadi kesalahan saat memulai pembelian paket Aniv.\n"
-            "Silakan coba lagi atau hubungi administrator."
-        )
-# --- FUNGSI PEMBANTU PEMBAYARAN ANIV LANGSUNG ---
-async def _process_direct_aniv_qris_payment(
-    main_message, context: ContextTypes.DEFAULT_TYPE,
-    api_key: str, tokens: dict
-):
-    """
-    Fungsi internal untuk memproses pembayaran QRIS paket Aniv dengan amount otomatis.
-    """
-    # Ambil data paket yang disimpan sementara
-    tmp_data = context.user_data.get('tmp_direct_aniv_data')
-    if not tmp_data:
-        await main_message.edit_text("❌ Data paket Aniv tidak ditemukan. Silakan ulangi proses.")
-        return
-
-    package_code = tmp_data['package_code']
-    package_name = tmp_data['package_name']
-    token_confirmation = tmp_data['token_confirmation']
-    confirmed_price = tmp_data['confirmed_price'] # Ini sudah 500
-
-    # 1. Kirim pesan ke pengguna bahwa proses pembayaran QRIS sedang dimulai
-    try:
-        await main_message.edit_text(f"🔄 Memproses pembayaran QRIS untuk paket:\n`{package_name}`", parse_mode='Markdown')
-    except Exception as e:
-        logger.error(f"[ANIV QRIS] Gagal mengedit pesan utama: {e}")
-        return
-
-    try:
-        # --- LANGKAH 1: Dapatkan metode pembayaran dari API ---
-        logger.info("[ANIV QRIS] Fetching payment methods...")
-        payment_methods_data = get_payment_methods(
-            api_key=api_key,
-            tokens=tokens,
-            token_confirmation=token_confirmation,
-            payment_target=package_code,
-        )
-        
-        if not payment_methods_data:
-            await main_message.edit_text("❌ Gagal mendapatkan metode pembayaran QRIS untuk paket Aniv.")
-            return
-
-        token_payment = payment_methods_data["token_payment"]
-        ts_to_sign = payment_methods_data["timestamp"]
-
-        # --- LANGKAH 2: Buat transaksi QRIS ---
-        logger.info("[ANIV QRIS] Creating QRIS settlement...")
-        logger.info(f"[ANIV QRIS DEBUG] Mengirim price: {confirmed_price} untuk paket {package_code}")
-        transaction_id = settlement_qris(
-            api_key=api_key,
-            tokens=tokens,
-            token_payment=token_payment,
-            ts_to_sign=ts_to_sign,
-            payment_target=package_code,
-            price=500, # Gunakan harga tetap 500
-            item_name=package_name,
-            force_amount=True
-        )
-        if not transaction_id:
-            error_msg = (
-                f"❌ Gagal membuat transaksi QRIS untuk paket Aniv (`{package_name}`).\n\n"
-                f"*Harga yang dikirim:* Rp {confirmed_price}\n\n"
-                "*Penyebab yang Mungkin:*\n"
-                "• Jumlah pembayaran (Rp 500) tidak dikenali untuk paket ini oleh API MyXL.\n"
-                "• Token konfirmasi mungkin sudah kadaluarsa.\n\n"
-                "*Solusi:*\n"
-                "1. Coba lagi dalam beberapa menit.\n"
-                "2. Gunakan metode pembayaran lain melalui menu 'Family Code' -> pilih paket -> QRIS.\n"
-                "3. Hubungi administrator jika masalah berlanjut."
-            )
-            await main_message.edit_text(error_msg, parse_mode='Markdown')
-            logger.error(f"[ANIV QRIS] Gagal membuat settlement. Price yang dikirim: {confirmed_price}")
-            return
-
-        # --- LANGKAH 3: Dapatkan data QRIS (kode QR) dari API ---
-        logger.info("[ANIV QRIS] Fetching QRIS code...")
-        qris_data = get_qris_code(api_key, tokens, transaction_id)
-        
-        if not qris_data:
-            await main_message.edit_text("❌ Gagal mendapatkan data QRIS untuk paket Aniv.")
-            return
-
-        # --- LANGKAH 4: Buat dan kirim QR Code sebagai gambar ---
-        logger.info("[ANIV QRIS] Generating QR Code image...")
-        qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10, border=4)
-        qr.add_data(qris_data)
-        qr.make(fit=True)
-        img = qr.make_image(fill_color="black", back_color="white")
-
-        img_buffer = BytesIO()
-        img.save(img_buffer, format='PNG')
-        img_buffer.seek(0)
-
-        caption = (
-            f"🎉 *Pembayaran QRIS (Paket Aniv)*\n"
-            f"Silakan scan QR Code di bawah ini untuk menyelesaikan pembayaran.\n"
-            f"📦 *Paket:* `{package_name}`\n"
-            f"💰 *Harga:* Rp {confirmed_price:,}\n"
-            f"Setelah pembayaran berhasil, paket akan otomatis masuk ke akun Anda."
-        )
-        # Kirim QR Code
-        await main_message.reply_photo(photo=img_buffer, caption=caption, parse_mode='Markdown')
-
-        # Edit pesan utama untuk memberi tahu bahwa QR Code sudah dikirim
-        await main_message.edit_text(
-            f"✅ QR Code pembayaran untuk paket Aniv (`{package_name}`) telah dikirim!\n"
-            "Silakan scan QR Code yang dikirim di atas untuk menyelesaikan pembayaran.\n"
-            "Setelah pembayaran berhasil, paket akan otomatis masuk ke akun Anda."
-        )
-
-        # Reset data sementara
-        context.user_data.pop('tmp_direct_aniv_data', None)
-
-    except Exception as e:
-        logger.error(f"[ANIV QRIS] Error processing payment: {e}", exc_info=True)
-        try:
-            await main_message.edit_text(
-                "❌ Terjadi kesalahan saat memproses pembayaran QRIS untuk paket Aniv.\n"
-                "Silakan coba lagi atau hubungi administrator jika masalah berlanjut."
-            )
-        except:
-            pass # Abaikan error saat mencoba mengirim pesan error
-        # Reset data juga jika error
-        context.user_data.pop('tmp_direct_aniv_data', None)
-
-# --- AKHIR FUNGSI PEMBELIAN ANIV LANGSUNG ---
+        logger.error(f"Error fetching XUT Vidio package: {e}", exc_info=True)
+        await query.message.edit_text("❌ Terjadi kesalahan saat mengambil detail paket XUT Vidio.")
 # === MAIN FUNCTION (Pastikan urutan handler benar) ===
 def main() -> None:
     """Menjalankan bot"""
@@ -1218,3 +1053,4 @@ def main() -> None:
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 if __name__ == "__main__":
     main()
+
