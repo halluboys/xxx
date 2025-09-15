@@ -1,0 +1,18 @@
+[Unit]
+Description=File Backup Monitor for Telegram Bot
+After=network.target
+
+[Service]
+User=bottyuser # atau nama user Anda jika tidak menjalankan sebagai root
+Group=bottygroup # atau grup Anda
+
+# Ganti dengan path absolut ke folder tempat skrip Anda berada
+WorkingDirectory=/root/botty/ 
+
+# Ganti dengan path absolut ke python dan skrip Anda
+ExecStart=/root/xlunli_bot_venv/bin/python3 /root/bottyxlunli_bot/backup_monitor.py 
+
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
